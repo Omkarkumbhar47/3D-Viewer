@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  font-family: "ForumRegular" !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #222222 !important;
+  color: #E0E0E0 !important;
+  /* color: #7D809B; */ 
+  /* border */
+  text-decoration: none !important;
+  overflow: hidden;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+a{
+  text-decoration: none !important;
+ color: #E0E0E0 !important; 
+}
+.CustomBorder{
+  border: 2px solid #7D809B ;
+  border-style: dashed;
+  
+}
+
+@font-face {
+  font-family: "ForumRegular";
+  src: local("ForumRegular"),
+    url("./fonts/Forum-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
