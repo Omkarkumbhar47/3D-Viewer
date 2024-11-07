@@ -35,7 +35,7 @@ a {
   cursor: pointer;
 }
 
-.ThreeDButton{
+.ThreeDButton {
   background-color: #7d809b;
   color: #e0e0e0;
   border: none;
@@ -49,11 +49,21 @@ a {
   border-radius: 5px;
 }
 
-
 @font-face {
   font-family: "ForumRegular";
   src: local("ForumRegular"),
     url("./fonts/Forum-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+}
+
+.light-controls {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 180px;
+  background-color: #222222;
+  box-shadow: #00ffff;
+  padding: 4px;
+  border :1px solid #7d809b;
 }

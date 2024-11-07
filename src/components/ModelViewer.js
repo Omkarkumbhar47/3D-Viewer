@@ -40,9 +40,12 @@ export default function ModelViewer() {
   const [isDragActive, setIsDragActive] = useState(false);
 
   // Light settings
-  const [ambientIntensity, setAmbientIntensity] = useState(1.0);
-  const [directionalIntensity, setDirectionalIntensity] = useState(1.2);
+  const [ambientIntensity, setAmbientIntensity] = useState(3.0);
+  const [directionalIntensity, setDirectionalIntensity] = useState(4.0);
   const [lightPosition, setLightPosition] = useState([10, 10, 10]);
+
+  // console.log("Ambient ", ambientIntensity);
+  // console.log("directional ", directionalIntensity);
 
   const loadModel = (file) => {
     setError(null);
@@ -114,17 +117,13 @@ export default function ModelViewer() {
             <OrbitControls />
           </Canvas>
 
-          {/* Light Controls */}
-          <div
-            className="light-controls"
-            style={{ position: "absolute", top: 20, right: 20 }}
-          >
+          <div className="light-controls">
             <div>
               Ambient Light Intensity:
               <input
                 type="range"
-                min="0"
-                max="3"
+                min="2"
+                max="5"
                 step="0.1"
                 value={ambientIntensity}
                 onChange={(e) =>
@@ -136,8 +135,8 @@ export default function ModelViewer() {
               Directional Light Intensity:
               <input
                 type="range"
-                min="0"
-                max="3"
+                min="3"
+                max="7"
                 step="0.1"
                 value={directionalIntensity}
                 onChange={(e) =>
