@@ -1,4 +1,10 @@
-import React, { Suspense, useState, useCallback, useEffect, useRef } from "react";
+import React, {
+  Suspense,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, Center } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -12,12 +18,10 @@ function Model({ model }) {
 
   useEffect(() => {
     if (model && modelRef.current) {
-      // Compute the model's bounding box
       const box = new THREE.Box3().setFromObject(modelRef.current);
       const size = box.getSize(new THREE.Vector3()).length();
       const center = box.getCenter(new THREE.Vector3());
 
-      // Adjust the camera position and focus on the model's center
       camera.position.set(center.x, center.y, size * 1.5);
       camera.lookAt(center);
     }
@@ -33,6 +37,12 @@ function Model({ model }) {
 export default function ModelViewer() {
   const [model, setModel] = useState(null);
   const [error, setError] = useState(null);
+  const [isDragActive, setIsDragActive] = useState(false);
+
+  // Light settings
+  const [ambientIntensity, setAmbientIntensity] = useState(1.0);
+  const [directionalIntensity, setDirectionalIntensity] = useState(1.2);
+  const [lightPosition, setLightPosition] = useState([10, 10, 10]);
 
   const loadModel = (file) => {
     setError(null);
@@ -40,8 +50,6 @@ export default function ModelViewer() {
     const url = URL.createObjectURL(file);
 
     let loader;
-
-    // Select the appropriate loader based on the file extension
     switch (fileExtension) {
       case "glb":
       case "gltf":
@@ -54,14 +62,16 @@ export default function ModelViewer() {
         loader = new FBXLoader();
         break;
       default:
-        setError("Unsupported file format. Please use .glb, .gltf, .obj, or .fbx.");
+        setError(
+          "Unsupported file format. Please use .glb, .gltf, .obj, or .fbx."
+        );
         return;
     }
 
     loader
       .loadAsync(url)
       .then((loadedModel) => {
-        setModel(loadedModel.scene || loadedModel); // Handle different model formats
+        setModel(loadedModel.scene || loadedModel);
         URL.revokeObjectURL(url);
       })
       .catch(() => {
@@ -71,56 +81,159 @@ export default function ModelViewer() {
 
   const onDrop = useCallback((event) => {
     event.preventDefault();
+    setIsDragActive(false);
     const file = event.dataTransfer.files[0];
-    if (file) {
-      loadModel(file);
-    } else {
-      setError("Please drop a valid 3D file.");
-    }
+    if (file) loadModel(file);
   }, []);
 
   const onFileChange = (event) => {
     const file = event.target.files[0];
-    if (file) {
-      loadModel(file);
-    } else {
-      setError("Please select a valid 3D file.");
-    }
+    if (file) loadModel(file);
   };
-
-  const onDragOver = (event) => event.preventDefault();
 
   return (
     <div
       className="model-viewer CustomBorder rounded p-2 d-flex align-items-center justify-content-center"
       onDrop={onDrop}
-      onDragOver={onDragOver}
       style={{ width: "100%", height: "100%", position: "relative" }}
     >
-      {/* File Input */}
-      <input
-        type="file"
-        accept=".glb,.gltf,.obj,.fbx"
-        onChange={onFileChange}
-        style={{ position: "absolute", top: "10px", right: "10px", zIndex: 1 }}
-      />
-
-      {/* 3D Canvas or Message */}
       {model ? (
-        <Canvas
-          camera={{ position: [0, 1, 5], fov: 50 }}
-          style={{ width: "100%", height: "100%" }}
-        >
-          <ambientLight intensity={2.0} /> {/* Increased ambient light */}
-          <directionalLight position={[10, 10, 10]} intensity={1.2} /> {/* Adjusted directional light */}
-          <Suspense fallback={null}>
-            <Model model={model} />
-          </Suspense>
-          <OrbitControls />
-        </Canvas>
+        <>
+          <Canvas
+            camera={{ position: [0, 1, 5], fov: 50 }}
+            style={{ width: "100%", height: "100%" }}
+          >
+            <ambientLight intensity={ambientIntensity} />
+            <directionalLight
+              position={lightPosition}
+              intensity={directionalIntensity}
+            />
+            <Suspense fallback={null}>
+              <Model model={model} />
+            </Suspense>
+            <OrbitControls />
+          </Canvas>
+
+          {/* Light Controls */}
+          <div
+            className="light-controls"
+            style={{ position: "absolute", top: 20, right: 20 }}
+          >
+            <div>
+              Ambient Light Intensity:
+              <input
+                type="range"
+                min="0"
+                max="3"
+                step="0.1"
+                value={ambientIntensity}
+                onChange={(e) =>
+                  setAmbientIntensity(parseFloat(e.target.value))
+                }
+              />
+            </div>
+            <div>
+              Directional Light Intensity:
+              <input
+                type="range"
+                min="0"
+                max="3"
+                step="0.1"
+                value={directionalIntensity}
+                onChange={(e) =>
+                  setDirectionalIntensity(parseFloat(e.target.value))
+                }
+              />
+            </div>
+            <label>
+              Light Position X:
+              <input
+                type="range"
+                min="-20"
+                max="20"
+                step="1"
+                value={lightPosition[0]}
+                onChange={(e) =>
+                  setLightPosition([
+                    parseFloat(e.target.value),
+                    lightPosition[1],
+                    lightPosition[2],
+                  ])
+                }
+              />
+            </label>
+            <label>
+              Light Position Y:
+              <input
+                type="range"
+                min="-20"
+                max="20"
+                step="1"
+                value={lightPosition[1]}
+                onChange={(e) =>
+                  setLightPosition([
+                    lightPosition[0],
+                    parseFloat(e.target.value),
+                    lightPosition[2],
+                  ])
+                }
+              />
+            </label>
+            <label>
+              Light Position Z:
+              <input
+                type="range"
+                min="-20"
+                max="20"
+                step="1"
+                value={lightPosition[2]}
+                onChange={(e) =>
+                  setLightPosition([
+                    lightPosition[0],
+                    lightPosition[1],
+                    parseFloat(e.target.value),
+                  ])
+                }
+              />
+            </label>
+          </div>
+        </>
       ) : (
-        <div className="text-center">
-          {error || "Drag and drop a .glb, .gltf, .obj, or .fbx file here or use the file input"}
+        <div className="d-flex text-center">
+          {isDragActive ? (
+            <div className="fs-1">Release to view your file...</div>
+          ) : (
+            <div className="d-flex text-center">
+              {isDragActive ? (
+                <div className="fs-1">Release to view your file...</div>
+              ) : (
+                <label>
+                  <div className="fs-1"> Drag & Drop Files Here</div>
+                  <div className="fs-3"> Or </div>
+
+                  <div className="d-flex w-100  justify-content-center align-items-center">
+                    {!model && (
+                      <div className="d-flex justify-content-center align-items-center w-75">
+                        <input
+                          type="file"
+                          id="file-upload"
+                          accept=".glb,.gltf,.obj,.fbx"
+                          onChange={onFileChange}
+                          style={{ display: "none" }}
+                        />
+                        <label
+                          htmlFor="file-upload"
+                          className="ThreeDButton ThreeDElem fs-2"
+                        >
+                          Browse Model
+                        </label>
+                      </div>
+                    )}
+                  </div>
+                </label>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -4,8 +4,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #222222 !important;
-  color: #E0E0E0 !important;
-  /* color: #7D809B; */ 
+  color: #e0e0e0 !important;
+  /* color: #7D809B; */
   /* border */
   text-decoration: none !important;
   overflow: hidden;
@@ -16,15 +16,39 @@ code {
     monospace;
 }
 
-a{
+a {
   text-decoration: none !important;
- color: #E0E0E0 !important; 
+  color: #e0e0e0 !important;
 }
-.CustomBorder{
-  border: 2px solid #7D809B ;
+.CustomBorder {
+  border: 2px solid #7d809b;
   border-style: dashed;
-  
 }
+
+.ThreeDElem:hover {
+  cursor: pointer;
+  color: #00ffff;
+  /* background-color: red; */
+}
+.ViewerIcon {
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.ThreeDButton{
+  background-color: #7d809b;
+  color: #e0e0e0;
+  border: none;
+  cursor: pointer;
+  padding: 2px 10px;
+  text-align: center;
+  font-size: 16px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  border-radius: 5px;
+}
+
 
 @font-face {
   font-family: "ForumRegular";

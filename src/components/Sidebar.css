@@ -1,0 +1,39 @@
+.SidebarElem {
+  background-color: #7d809b;
+  color: #e0e0e0;
+}
+
+.ThreeDElem:hover {
+  cursor: pointer;
+  color: #00ffff;
+}
+
+
+.SidebarElem {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .tooltip-text {
+    visibility: hidden;
+    background-color: #7d809b;
+    color: #e0e0e0;
+    text-align: center;
+    padding: 5px;
+    border-radius: 4px;
+    position: absolute;
+    top: 50%;
+    left: 105%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .SidebarElem:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  

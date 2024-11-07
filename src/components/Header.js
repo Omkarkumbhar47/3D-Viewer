@@ -5,7 +5,7 @@ function Header() {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const [fullScreenOn, setFullScreenOn] = useState(false);
-  const handleToggleFullscreen = () => {};
+
   // Update the time every second
   useEffect(() => {
     const timer = setInterval(() => {
@@ -52,14 +52,12 @@ function Header() {
   };
 
   return (
-    <div className="d-flex justify-content-between align-items-center ">
-      <div className="logo">
-        <Link to="/" className="fs-3 text-white">
-          3D Viewer
-        </Link>
-      </div>
+    <div className="d-flex justify-content-between align-items-center ">  
+      <Link to="/" className="fs-3 ">
+        <div className="ThreeDElem">3D Viewer</div>
+      </Link>
 
-      <div className="date-time">
+      <div className="date-time d-none d-md-block">
         <span>{currentDate}</span> | <span>{currentTimeString}</span>
       </div>
 
@@ -74,15 +72,18 @@ function Header() {
           Manage Models
         </Link>
       </div> */}
-      <div className="controls">
+      <div className="controls d-none d-md-block">
         {fullScreenOn ? (
-          <button className="btn btn-light mx-1" onClick={toggleFullScreen}>
-            <i className="ri-fullscreen-exit-line"> </i> Minimize
+          <button className=" ThreeDButton ThreeDElem" onClick={toggleFullScreen}>
+            <i className="ri-fullscreen-exit-line ViewerIcon"> </i>
+            <div className="ms-2">Minimize</div>
           </button>
         ) : (
-          <button className="btn btn-light mx-1" onClick={toggleFullScreen}>
-            <i className="ri-fullscreen-line"> </i>Fullscreen
+          <button className=" ThreeDButton ThreeDElem" onClick={toggleFullScreen}>
+            <i className="ri-fullscreen-line ViewerIcon"> </i>
+            <div className="ms-2">Fullscreen</div>
           </button>
+         
         )}
       </div>
     </div>
