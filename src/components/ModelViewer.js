@@ -44,8 +44,7 @@ export default function ModelViewer() {
   const [directionalIntensity, setDirectionalIntensity] = useState(4.0);
   const [lightPosition, setLightPosition] = useState([10, 10, 10]);
 
-  // console.log("Ambient ", ambientIntensity);
-  // console.log("directional ", directionalIntensity);
+
 
   const loadModel = (file) => {
     setError(null);
