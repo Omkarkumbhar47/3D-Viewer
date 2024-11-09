@@ -1,22 +1,17 @@
-import React, {
-  Suspense,
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
+import React, { Suspense, useState, useCallback, useEffect, useRef } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, Center } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import * as THREE from "three";
+import Sidebar from "./Sidebar";
 
-function Model({ model }) {
+function Model({ model, onClickPart }) {
   const { camera } = useThree();
   const modelRef = useRef();
 
-  useEffect(() => {
+  useEffect(() => { 
     if (model && modelRef.current) {
       const box = new THREE.Box3().setFromObject(modelRef.current);
       const size = box.getSize(new THREE.Vector3()).length();
@@ -29,22 +24,23 @@ function Model({ model }) {
 
   return model ? (
     <Center>
-      <primitive object={model} ref={modelRef} />
+      <primitive
+        object={model}
+        ref={modelRef}
+        onClick={(event) => onClickPart(event.object)} // Handle part click
+      />
     </Center>
   ) : null;
 }
 
-export default function ModelViewer() {
+export default function ModelViewer({ onModelLoad, onPartClick, toggleVisibility }) {
   const [model, setModel] = useState(null);
   const [error, setError] = useState(null);
   const [isDragActive, setIsDragActive] = useState(false);
-
-  // Light settings
-  const [ambientIntensity, setAmbientIntensity] = useState(3.0);
-  const [directionalIntensity, setDirectionalIntensity] = useState(4.0);
-  const [lightPosition, setLightPosition] = useState([10, 10, 10]);
-
-
+  const [parts, setParts] = useState([]);
+  const [selectedPart, setSelectedPart] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMeshesSectionOpen, setIsMeshesSectionOpen] = useState(false); // Track if "Meshes" section is open
 
   const loadModel = (file) => {
     setError(null);
@@ -64,9 +60,7 @@ export default function ModelViewer() {
         loader = new FBXLoader();
         break;
       default:
-        setError(
-          "Unsupported file format. Please use .glb, .gltf, .obj, or .fbx."
-        );
+        setError("Unsupported file format. Please use .glb, .gltf, .obj, or .fbx.");
         return;
     }
 
@@ -75,10 +69,24 @@ export default function ModelViewer() {
       .then((loadedModel) => {
         setModel(loadedModel.scene || loadedModel);
         URL.revokeObjectURL(url);
+
+        setIsSidebarOpen(true);
+        extractParts(loadedModel.scene || loadedModel); // Extract parts for the sidebar
       })
       .catch(() => {
         setError("Failed to load model. Please try a different file.");
       });
+  };
+
+  const extractParts = (model) => {
+    const partsArray = [];
+    model.traverse((child) => {
+      if (child.isMesh) {
+        partsArray.push({ name: child.name || "Unnamed Part", mesh: child });
+      }
+    });
+    setParts(partsArray);
+    onModelLoad(partsArray); // Pass parts to layout
   };
 
   const onDrop = useCallback((event) => {
@@ -92,6 +100,38 @@ export default function ModelViewer() {
     const file = event.target.files[0];
     if (file) loadModel(file);
   };
+// 
+
+// 
+// 
+// 
+  const handlePartToggle = (mesh) => {
+    mesh.visible = !mesh.visible;
+    setParts([...parts]); // Update state to reflect visibility changes
+  };
+
+  const handlePartClick = (part) => {
+    if (!isMeshesSectionOpen) return; // Only allow selection if "Meshes" section is open
+
+    // Reset previously selected part material
+    if (selectedPart && selectedPart.mesh) {
+      selectedPart.mesh.material.color.set("white");
+      selectedPart.mesh.material.opacity = 1.0;
+      selectedPart.mesh.material.transparent = false;
+    }
+
+    // Highlight new selected part
+    setSelectedPart(part);
+    part.mesh.material.color.set("lightblue");
+    part.mesh.material.opacity = 0.6;
+    part.mesh.material.transparent = true;
+  };
+
+  const handleSidebarToggle = (section) => {
+    if (section === "Meshes") {
+      setIsMeshesSectionOpen(!isMeshesSectionOpen);
+    }
+  };
 
   return (
     <div
@@ -99,138 +139,48 @@ export default function ModelViewer() {
       onDrop={onDrop}
       style={{ width: "100%", height: "100%", position: "relative" }}
     >
+      
       {model ? (
-        <>
-          <Canvas
-            camera={{ position: [0, 1, 5], fov: 50 }}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <ambientLight intensity={ambientIntensity} />
-            <directionalLight
-              position={lightPosition}
-              intensity={directionalIntensity}
-            />
-            <Suspense fallback={null}>
-              <Model model={model} />
-            </Suspense>
-            <OrbitControls />
-          </Canvas>
-
-          <div className="light-controls">
-            <div>
-              Ambient Light Intensity:
-              <input
-                type="range"
-                min="2"
-                max="5"
-                step="0.1"
-                value={ambientIntensity}
-                onChange={(e) =>
-                  setAmbientIntensity(parseFloat(e.target.value))
-                }
-              />
-            </div>
-            <div>
-              Directional Light Intensity:
-              <input
-                type="range"
-                min="3"
-                max="7"
-                step="0.1"
-                value={directionalIntensity}
-                onChange={(e) =>
-                  setDirectionalIntensity(parseFloat(e.target.value))
-                }
-              />
-            </div>
-            <label>
-              Light Position X:
-              <input
-                type="range"
-                min="-20"
-                max="20"
-                step="1"
-                value={lightPosition[0]}
-                onChange={(e) =>
-                  setLightPosition([
-                    parseFloat(e.target.value),
-                    lightPosition[1],
-                    lightPosition[2],
-                  ])
-                }
-              />
-            </label>
-            <label>
-              Light Position Y:
-              <input
-                type="range"
-                min="-20"
-                max="20"
-                step="1"
-                value={lightPosition[1]}
-                onChange={(e) =>
-                  setLightPosition([
-                    lightPosition[0],
-                    parseFloat(e.target.value),
-                    lightPosition[2],
-                  ])
-                }
-              />
-            </label>
-            <label>
-              Light Position Z:
-              <input
-                type="range"
-                min="-20"
-                max="20"
-                step="1"
-                value={lightPosition[2]}
-                onChange={(e) =>
-                  setLightPosition([
-                    lightPosition[0],
-                    lightPosition[1],
-                    parseFloat(e.target.value),
-                  ])
-                }
-              />
-            </label>
-          </div>
-        </>
+        <Canvas
+          camera={{ position: [0, 1, 5], fov: 50 }}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <ambientLight intensity={1.5} />
+          <directionalLight position={[0, 20, 0]} intensity={1.5} />
+          <directionalLight position={[0, -20, 0]} intensity={1.5} />
+          <directionalLight position={[-20, 0, 0]} intensity={1.5} />
+          <directionalLight position={[20, 0, 0]} intensity={1.5} />
+          <directionalLight position={[0, 0, 20]} intensity={1.5} />
+          <directionalLight position={[0, 0, -20]} intensity={1.5} />
+          <Suspense fallback={null}>
+            <Model model={model} onClickPart={handlePartClick} />
+          </Suspense>
+          <OrbitControls />
+        </Canvas>
       ) : (
         <div className="d-flex text-center">
           {isDragActive ? (
             <div className="fs-1">Release to view your file...</div>
           ) : (
-            <div className="d-flex text-center">
-              {isDragActive ? (
-                <div className="fs-1">Release to view your file...</div>
-              ) : (
-                <label>
-                  <div className="fs-1"> Drag & Drop Files Here</div>
-                  <div className="fs-3"> Or </div>
-
-                  <div className="d-flex w-100  justify-content-center align-items-center">
-                    {!model && (
-                      <div className="d-flex justify-content-center align-items-center w-75">
-                        <input
-                          type="file"
-                          id="file-upload"
-                          accept=".glb,.gltf,.obj,.fbx"
-                          onChange={onFileChange}
-                          style={{ display: "none" }}
-                        />
-                        <label
-                          htmlFor="file-upload"
-                          className="ThreeDButton ThreeDElem fs-2"
-                        >
-                          Browse Model
-                        </label>
-                      </div>
-                    )}
-                  </div>
+            <label>
+              <div className="fs-1"> Drag & Drop Files Here</div>
+              <div className="fs-3"> Or </div>
+              <div className="d-flex w-100 justify-content-center align-items-center">
+                <input
+                  type="file"
+                  id="file-upload"
+                  accept=".glb,.gltf,.obj,.fbx"
+                  onChange={onFileChange}
+                  style={{ display: "none" }}
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="ThreeDButton ThreeDElem fs-2"
+                >
+                  Browse Model
                 </label>
-              )}
-            </div>
+              </div>
+            </label>
           )}
         </div>
       )}
