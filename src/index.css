@@ -1,4 +1,4 @@
-body {
+body ,input, select{
   margin: 0;
   font-family: "ForumRegular" !important;
   -webkit-font-smoothing: antialiased;
@@ -14,6 +14,11 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+input{
+  background-color: #222222 !important;
+  color: #e0e0e0 !important;
 }
 
 a {
@@ -65,5 +70,39 @@ a {
   background-color: #222222;
   box-shadow: #00ffff;
   padding: 4px;
-  border :1px solid #7d809b;
+  border: 1px solid #7d809b;
+}
+
+/* Custom scrollbar variables */
+.sidebarScroller,
+body {
+  --sb-track-color: #212529;
+  --sb-thumb-color: #7d809b;
+  --sb-size: 5px !important;
+}
+
+/* For WebKit browsers like Chrome, Safari */
+.sidebarScroller::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: var(--sb-size);
+  height: var(--sb-size);
+}
+
+.sidebarScroller::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 100px !important;
+}
+
+.sidebarScroller::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background-color: var(--sb-thumb-color);
+  border-radius: 100px !important;
+}
+
+/* For Firefox */
+.sidebarScroller,
+body {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
 }
