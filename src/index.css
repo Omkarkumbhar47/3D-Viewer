@@ -78,7 +78,7 @@ a {
 body {
   --sb-track-color: #212529;
   --sb-thumb-color: #7d809b;
-  --sb-size: 5px !important;
+  --sb-size: 2px !important;
 }
 
 /* For WebKit browsers like Chrome, Safari */
@@ -105,4 +105,8 @@ body::-webkit-scrollbar-thumb {
 body {
   scrollbar-width: thin;
   scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+}
+
+.pointer{
+  cursor: pointer;
 }

@@ -1,17 +1,22 @@
-import React, { Suspense, useState, useCallback, useEffect, useRef } from "react";
+import React, {
+  Suspense,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import { Canvas, useThree } from "@react-three/fiber";
-import { OrbitControls, Center } from "@react-three/drei";
+import { OrbitControls, Center, Environment, Stats } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import * as THREE from "three";
-import Sidebar from "./Sidebar";
 
 function Model({ model, onClickPart }) {
   const { camera } = useThree();
   const modelRef = useRef();
 
-  useEffect(() => { 
+  useEffect(() => {
     if (model && modelRef.current) {
       const box = new THREE.Box3().setFromObject(modelRef.current);
       const size = box.getSize(new THREE.Vector3()).length();
@@ -33,7 +38,15 @@ function Model({ model, onClickPart }) {
   ) : null;
 }
 
-export default function ModelViewer({ onModelLoad, onPartClick, toggleVisibility }) {
+export default function ModelViewer({
+  onModelLoad,
+  onPartClick,
+  toggleVisibility,
+  backgroundColor,
+  environment,
+  environmentImage,
+  selectedHDRI,
+}) {
   const [model, setModel] = useState(null);
   const [error, setError] = useState(null);
   const [isDragActive, setIsDragActive] = useState(false);
@@ -60,7 +73,9 @@ export default function ModelViewer({ onModelLoad, onPartClick, toggleVisibility
         loader = new FBXLoader();
         break;
       default:
-        setError("Unsupported file format. Please use .glb, .gltf, .obj, or .fbx.");
+        setError(
+          "Unsupported file format. Please use .glb, .gltf, .obj, or .fbx."
+        );
         return;
     }
 
@@ -100,11 +115,7 @@ export default function ModelViewer({ onModelLoad, onPartClick, toggleVisibility
     const file = event.target.files[0];
     if (file) loadModel(file);
   };
-// 
 
-// 
-// 
-// 
   const handlePartToggle = (mesh) => {
     mesh.visible = !mesh.visible;
     setParts([...parts]); // Update state to reflect visibility changes
@@ -139,12 +150,23 @@ export default function ModelViewer({ onModelLoad, onPartClick, toggleVisibility
       onDrop={onDrop}
       style={{ width: "100%", height: "100%", position: "relative" }}
     >
-      
       {model ? (
         <Canvas
           camera={{ position: [0, 1, 5], fov: 50 }}
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "100%", background: backgroundColor }}
         >
+          {backgroundColor && (
+            <color attach="background" args={[backgroundColor]} />
+          )}
+
+          {/* Apply HDRI as Environment */}
+          {selectedHDRI && (
+            <Environment
+              files={selectedHDRI}
+              background
+              // backgroundBlurriness={0.5}
+            />
+          )}
           <ambientLight intensity={1.5} />
           <directionalLight position={[0, 20, 0]} intensity={1.5} />
           <directionalLight position={[0, -20, 0]} intensity={1.5} />
@@ -156,6 +178,13 @@ export default function ModelViewer({ onModelLoad, onPartClick, toggleVisibility
             <Model model={model} onClickPart={handlePartClick} />
           </Suspense>
           <OrbitControls />
+          {environment && <Environment preset={environment} />}
+          {environmentImage && (
+            <Environment files={environmentImage} background />
+          )}
+          {selectedHDRI && <Environment files={selectedHDRI} />}
+          {/* <axesHelper args={[5]} /> */}
+          {/* <Stats /> */}
         </Canvas>
       ) : (
         <div className="d-flex text-center">
