@@ -10,7 +10,7 @@
 .partsColor:hover {
   background-color: #7d809b;
 }
-.inputSidebar{
+.inputSidebar {
   background-color: #222222 !important;
   border: 0 !important;
 }
@@ -19,4 +19,11 @@
   border-color: #7d809b !important;
   outline: 0;
   box-shadow: 0 0 0 0.25rem #7d809b83 !important;
+}
+.highlighted {
+  background-color: lightblue; /* Highlight color */
+  color: #222222;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 2px;
 }

@@ -5,25 +5,29 @@ import ModelViewer from "./ModelViewer";
 import Sidebar from "./Sidebar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-function Layout() {
+export default function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [modelParts, setModelParts] = useState([]); // Store extracted parts
+  const [modelParts, setModelParts] = useState([]);
   const [backgroundColor, setBackgroundColor] = useState("#222222");
   const [environment, setEnvironment] = useState(null);
   const [selectedHDRI, setSelectedHDRI] = useState(null);
-  
+  const [selectedPart, setSelectedPart] = useState(null);
+  const [selectedSidebarPart, setSelectedSidebarPart] = useState(null);
+
+  // Handle selecting a part from the sidebar
+  const handleSelectPart = (part) => {
+    if (selectedPart && selectedPart !== part) {
+      // Deselect the previous part
+      setSelectedPart(null);
+    }
+    // Select the new part
+    setSelectedPart(part);
+  };
 
   // Function called when a model loads and extracts its parts
   const handleModelLoad = (parts) => {
     setIsSidebarOpen(true); // Open sidebar when model loads
     setModelParts(parts); // Pass parts to sidebar
-  };
-
-  const handlePartClick = (part) => {
-    // Highlight logic for clicked part
-    part.material.color.set("lightblue");
-    part.material.opacity = 0.6;
-    part.material.transparent = true;
   };
 
   const handleToggleVisibility = (part) => {
@@ -40,11 +44,14 @@ function Layout() {
         {isSidebarOpen && (
           <Sidebar
             modelParts={modelParts}
-            onPartClick={handlePartClick} // Pass function to handle part click
-            toggleVisibility={handleToggleVisibility} // Pass function to toggle visibility
+            toggleVisibility={handleToggleVisibility}
             setBackgroundColor={setBackgroundColor}
             setEnvironment={setEnvironment}
             setSelectedHDRI={setSelectedHDRI}
+            onSelectPart={handleSelectPart}
+            selectedPart={selectedPart}
+            setSelectedSidebarPart={setSelectedSidebarPart}
+            selectedSidebarPart={selectedSidebarPart}
           />
         )}
         <ModelViewer
@@ -52,16 +59,15 @@ function Layout() {
           backgroundColor={backgroundColor}
           environment={environment}
           selectedHDRI={selectedHDRI}
+          selectedPart={selectedPart}
+          onSelectPart={handleSelectPart}
+          setSelectedSidebarPart={setSelectedSidebarPart} // Pass this down
+          selectedSidebarPart={selectedSidebarPart} // Track selected part
         />
       </div>
-      <footer
-        className="d-flex justify-content-center align-items-center px-sm-5"
-        style={{ height: "50px" }}
-      >
+      <footer className="d-flex justify-content-center align-items-center px-sm-5" style={{ height: "50px" }}>
         <Footer />
       </footer>
     </div>
   );
 }
-
-export default Layout;

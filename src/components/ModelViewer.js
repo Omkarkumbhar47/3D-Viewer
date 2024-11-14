@@ -12,48 +12,119 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import * as THREE from "three";
 
-function Model({ model, onClickPart }) {
+function Model({
+  model,
+  selectedPart,
+  setSelectedPart,
+  setSelectedSidebarPart,
+}) {
   const { camera } = useThree();
   const modelRef = useRef();
+  const [originalMaterials, setOriginalMaterials] = useState([]);
 
+  // Store original material properties when the model is loaded
+  useEffect(() => {
+    if (model) {
+      const materials = [];
+      model.traverse((child) => {
+        if (child.isMesh) {
+          // Store the original material properties
+          materials.push({
+            mesh: child,
+            originalColor: child.material.color.getHex(),
+            originalOpacity: child.material.opacity,
+          });
+        }
+      });
+      setOriginalMaterials(materials);
+    }
+  }, [model]);
+
+  // Update the camera position based on the model's size and center
   useEffect(() => {
     if (model && modelRef.current) {
       const box = new THREE.Box3().setFromObject(modelRef.current);
       const size = box.getSize(new THREE.Vector3()).length();
       const center = box.getCenter(new THREE.Vector3());
-
       camera.position.set(center.x, center.y, size * 1.5);
       camera.lookAt(center);
     }
   }, [model, camera]);
+  useEffect(() => {
+    // Add double-click event listener to clear the selected part
+    const handleDoubleClick = () => {
+      setSelectedPart(null); // Deselect all parts
+      setSelectedSidebarPart(null); // Clear the sidebar selection
+    };
+
+    // Add the event listener to the canvas or viewer container
+    const viewerContainer = document.getElementById("model-viewer-container");
+    viewerContainer.addEventListener("dblclick", handleDoubleClick);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      viewerContainer.removeEventListener("dblclick", handleDoubleClick);
+    };
+  }, [setSelectedPart, setSelectedSidebarPart]);
+
+  // Apply highlighting or restore the original material properties
+  useEffect(() => {
+    if (model && originalMaterials.length > 0) {
+      model.traverse((child) => {
+        if (child.isMesh) {
+          const materialData = originalMaterials.find(
+            (data) => data.mesh === child
+          );
+
+          if (materialData) {
+            if (selectedPart && selectedPart === child) {
+              // Highlight the selected part
+              child.material.color.setHex(0x00aaff); // Highlight color
+              child.material.opacity = 0.6;
+              child.material.transparent = true;
+            } else {
+              // Restore original material properties
+              child.material.color.setHex(materialData.originalColor);
+              child.material.opacity = materialData.originalOpacity;
+              child.material.transparent = false;
+            }
+          }
+        }
+      });
+    }
+  }, [model, selectedPart, originalMaterials]);
 
   return model ? (
-    <Center>
-      <primitive
-        object={model}
-        ref={modelRef}
-        onClick={(event) => onClickPart(event.object)} // Handle part click
-      />
-    </Center>
+    <group
+      ref={modelRef}
+      onClick={(event) => {
+        event.stopPropagation();
+        const clickedPart = event.object;
+        setSelectedPart(clickedPart); // Highlight the clicked part
+        setSelectedSidebarPart(clickedPart); // Sync with Sidebar
+      }}
+    >
+      <Center>
+        <primitive object={model} />
+      </Center>
+    </group>
   ) : null;
 }
 
 export default function ModelViewer({
   onModelLoad,
-  onPartClick,
-  toggleVisibility,
   backgroundColor,
   environment,
-  environmentImage,
   selectedHDRI,
+  selectedSidebarPart, // Add this prop for selected part from the sidebar
+  setSelectedSidebarPart, // Function to set the selected part in the sidebar
 }) {
   const [model, setModel] = useState(null);
   const [error, setError] = useState(null);
   const [isDragActive, setIsDragActive] = useState(false);
   const [parts, setParts] = useState([]);
-  const [selectedPart, setSelectedPart] = useState(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMeshesSectionOpen, setIsMeshesSectionOpen] = useState(false); // Track if "Meshes" section is open
+  const [selectedPart, setSelectedPart] = useState(null); // Track selected part
 
   const loadModel = (file) => {
     setError(null);
@@ -84,9 +155,7 @@ export default function ModelViewer({
       .then((loadedModel) => {
         setModel(loadedModel.scene || loadedModel);
         URL.revokeObjectURL(url);
-
-        setIsSidebarOpen(true);
-        extractParts(loadedModel.scene || loadedModel); // Extract parts for the sidebar
+        extractParts(loadedModel.scene || loadedModel); // Extract parts and sen to the sidebar
       })
       .catch(() => {
         setError("Failed to load model. Please try a different file.");
@@ -101,7 +170,11 @@ export default function ModelViewer({
       }
     });
     setParts(partsArray);
-    onModelLoad(partsArray); // Pass parts to layout
+    onModelLoad(partsArray); // Pass parts to layout then sidebar
+  };
+  const handleClickPart = (part) => {
+    console.log("Clicked part:", part); // Debugging line to confirm clicks
+    setSelectedPart(part); // Update selected part
   };
 
   const onDrop = useCallback((event) => {
@@ -116,39 +189,25 @@ export default function ModelViewer({
     if (file) loadModel(file);
   };
 
-  const handlePartToggle = (mesh) => {
-    mesh.visible = !mesh.visible;
-    setParts([...parts]); // Update state to reflect visibility changes
-  };
-
-  const handlePartClick = (part) => {
-    if (!isMeshesSectionOpen) return; // Only allow selection if "Meshes" section is open
-
-    // Reset previously selected part material
-    if (selectedPart && selectedPart.mesh) {
-      selectedPart.mesh.material.color.set("white");
-      selectedPart.mesh.material.opacity = 1.0;
-      selectedPart.mesh.material.transparent = false;
+  // Update selected part when part is clicked in Sidebar
+  useEffect(() => {
+    if (selectedSidebarPart) {
+      setSelectedPart(selectedSidebarPart);
     }
-
-    // Highlight new selected part
-    setSelectedPart(part);
-    part.mesh.material.color.set("lightblue");
-    part.mesh.material.opacity = 0.6;
-    part.mesh.material.transparent = true;
-  };
-
-  const handleSidebarToggle = (section) => {
-    if (section === "Meshes") {
-      setIsMeshesSectionOpen(!isMeshesSectionOpen);
-    }
-  };
+  }, [selectedSidebarPart]);
 
   return (
     <div
+      id="model-viewer-container"
       className="model-viewer CustomBorder rounded p-2 d-flex align-items-center justify-content-center"
-      onDrop={onDrop}
+      // onDrop={onDrop}
       style={{ width: "100%", height: "100%", position: "relative" }}
+      onDrop={(event) => {
+        event.preventDefault();
+        setIsDragActive(false);
+        const file = event.dataTransfer.files[0];
+        if (file) loadModel(file);
+      }}
     >
       {model ? (
         <Canvas
@@ -159,7 +218,6 @@ export default function ModelViewer({
             <color attach="background" args={[backgroundColor]} />
           )}
 
-          {/* Apply HDRI as Environment */}
           {selectedHDRI && (
             <Environment
               files={selectedHDRI}
@@ -167,21 +225,24 @@ export default function ModelViewer({
               // backgroundBlurriness={0.5}
             />
           )}
-          <ambientLight intensity={1.5} />
-          <directionalLight position={[0, 20, 0]} intensity={1.5} />
-          <directionalLight position={[0, -20, 0]} intensity={1.5} />
-          <directionalLight position={[-20, 0, 0]} intensity={1.5} />
-          <directionalLight position={[20, 0, 0]} intensity={1.5} />
-          <directionalLight position={[0, 0, 20]} intensity={1.5} />
-          <directionalLight position={[0, 0, -20]} intensity={1.5} />
+          <ambientLight intensity={1.0} />
+          <directionalLight position={[0, 20, 0]} intensity={1.0} />
+          <directionalLight position={[0, -20, 0]} intensity={1.0} />
+          <directionalLight position={[-20, 0, 0]} intensity={1.0} />
+          <directionalLight position={[20, 0, 0]} intensity={1.0} />
+          <directionalLight position={[0, 0, 20]} intensity={1.0} />
+          <directionalLight position={[0, 0, -20]} intensity={1.0} />
           <Suspense fallback={null}>
-            <Model model={model} onClickPart={handlePartClick} />
+            <Model
+              model={model}
+              onClickPart={handleClickPart}
+              selectedPart={selectedPart} // Pass selected part
+              setSelectedPart={setSelectedPart} // Pass function to update selected part
+              setSelectedSidebarPart={setSelectedSidebarPart} // Sync selected part to sidebar
+            />
           </Suspense>
           <OrbitControls />
           {environment && <Environment preset={environment} />}
-          {environmentImage && (
-            <Environment files={environmentImage} background />
-          )}
           {selectedHDRI && <Environment files={selectedHDRI} />}
           {/* <axesHelper args={[5]} /> */}
           {/* <Stats /> */}
