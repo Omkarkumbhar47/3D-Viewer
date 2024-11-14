@@ -81,12 +81,12 @@ function Model({
               // Highlight the selected part
               child.material.color.setHex(0x00aaff); // Highlight color
               child.material.opacity = 0.6;
-              child.material.transparent = true;
+              // child.material.transparent = true;
             } else {
               // Restore original material properties
               child.material.color.setHex(materialData.originalColor);
-              child.material.opacity = materialData.originalOpacity;
-              child.material.transparent = false;
+              child.material.opacity = 1;
+              // child.material.transparent = false;
             }
           }
         }
@@ -164,7 +164,17 @@ export default function ModelViewer({
 
   const extractParts = (model) => {
     const partsArray = [];
+    
     model.traverse((child) => {
+      // if (child.isMesh) {
+      //   console.log(child.material); // Check the material properties
+      //   if (!child.material.map) {
+      //     console.log('No texture map found on');
+      //   }
+      //   else{
+      //     console.log('Texture map found on', child.name); // Debugging line to confirm texture mapping
+      //   }
+      // }
       if (child.isMesh) {
         partsArray.push({ name: child.name || "Unnamed Part", mesh: child });
       }

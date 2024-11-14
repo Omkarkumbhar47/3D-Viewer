@@ -104,7 +104,8 @@ const Sidebar = ({
           <div>
             {modelParts.map((part, index) => (
               <div
-                key={index}
+                // key={index}
+                key={part.mesh.name}
                 className={`d-flex justify-content-between align-items-center mb-1 p-1 ${
                   selectedSidebarPart === part.mesh ? "highlighted" : ""
                 }`}
@@ -177,7 +178,10 @@ const Sidebar = ({
               }}
             >
               {hdriOptions.map((hdri) => (
-                <div className=" d-flex flex-column align-items-center pointer">
+                <div
+                  className=" d-flex flex-column align-items-center pointer"
+                  key={hdri.url}
+                >
                   <div
                     key={hdri.name}
                     className=" d-flex flex-column align-items-center pointer  overflow-hidden"
