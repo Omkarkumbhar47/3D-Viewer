@@ -11,6 +11,8 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import * as THREE from "three";
+import CustomLoader from "./Loder";
+import { Html, useProgress } from "@react-three/drei";
 
 function Model({
   model,
@@ -161,6 +163,13 @@ export default function ModelViewer({
         setError("Failed to load model. Please try a different file.");
       });
   };
+  const Loder = () => {
+    return (
+      <Html center>
+        <div style={{ color: '#fff' }}>Loading...</div>
+      </Html>
+    );
+  };
 
   const extractParts = (model) => {
     const partsArray = [];
@@ -242,7 +251,7 @@ export default function ModelViewer({
           <directionalLight position={[20, 0, 0]} intensity={1.0} />
           <directionalLight position={[0, 0, 20]} intensity={1.0} />
           <directionalLight position={[0, 0, -20]} intensity={1.0} />
-          <Suspense fallback={null}>
+          <Suspense fallback={<Loder />}>
             <Model
               model={model}
               onClickPart={handleClickPart}
