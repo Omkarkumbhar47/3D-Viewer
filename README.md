@@ -1,70 +1,109 @@
-# Getting Started with Create React App
+---
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 3D Model Viewer Application  
 
-## Available Scripts
+## Overview  
+This project is a **3D Model Viewer** built with **React**, **React Three Fiber**, **Drei**, **Three.js**, and **Bootstrap**. It allows users to load, explore, and interact with 3D models in an intuitive and responsive interface.  
 
-In the project directory, you can run:
+## Features  
+### Layout  
+- **Responsive Header and Footer**:  
+  - Heights adjust based on screen size:  
+    - XS (<576px): 50px  
+    - SM (576px - 767px): 60px  
+    - MD (768px - 991px): 70px  
+    - LG (992px - 1199px): 80px  
+    - XL (1200px+): 90px  
+  - Header includes:  
+    - Logo  
+    - Minimize/Maximize controls  
+    - Current date and time  
+    - Other options  
 
-### `npm start`
+- **Sidebar**:  
+  - Opens automatically when a model is loaded.  
+  - Settings to configure:  
+    - Background color  
+    - Environment settings  
+  - 'Meshes' section to traverse model parts, toggle visibility, and highlight selected parts.  
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Model Viewer**:  
+  - Responsive canvas adapting to screen size.  
+  - Supports file selection and drag-and-drop for loading 3D models.  
+  - Highlights model parts on click with transparency and blue shade.  
+  - Synchronizes part selection between canvas and sidebar.  
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Functionality  
+1. **Lighting Helper**  
+   - Adjustable lighting settings for better model visualization.  
 
-### `npm test`
+2. **Model Traversal**  
+   - Displays part names in the sidebar's 'Meshes' section.  
+   - Allows toggling part visibility.  
+   - Highlights the selected part and synchronizes its state with the sidebar.  
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3. **Snapshot Tool**  
+   - Capture screenshots of the canvas in various resolutions:  
+     - Small (1280x720)  
+     - Medium (1920x1080)  
+     - Large (2560x1440)  
+     - Custom (user-defined width and height)  
+   - Option to enable/disable transparent background in the snapshot.  
 
-### `npm run build`
+### Customizations  
+- Integrated a custom font: **ForumRegular**, sourced from a local file (`./fonts/Forum-Regular.ttf`).  
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Technology Stack  
+- **React**  
+- **React Three Fiber**  
+- **Drei**  
+- **Three.js**  
+- **Bootstrap**  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Getting Started  
+### Installation  
+1. Clone the repository:  
+   ```bash  
+   git clone <repository-url>  
+   cd <project-directory>  
+   ```  
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Install dependencies:  
+   ```bash  
+   npm install  
+   ```  
 
-### `npm run eject`
+3. Run the project:  
+   ```bash  
+   npm start  
+   ```  
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### File Structure  
+```plaintext  
+src/  
+├── components/  
+│   ├── Header/  
+│   ├── Footer/  
+│   ├── Sidebar/  
+│   ├── ModelViewer/  
+├── fonts/  
+│   └── Forum-Regular.ttf  
+├── utils/  
+│   └── lightingHelper.js  
+├── App.js  
+└── index.js  
+```  
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Usage  
+1. Load a 3D model through file selection or drag-and-drop.  
+2. Explore model parts, toggle visibility, and highlight parts via the sidebar or canvas.  
+3. Adjust canvas lighting and environment settings through the sidebar.  
+4. Take snapshots with the customizable screenshot tool.  
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Future Improvements  
+- Add animations for transitions and interactions.  
+- Extend format support for 3D models.  
+- Implement a dark/light theme toggle.  
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---  

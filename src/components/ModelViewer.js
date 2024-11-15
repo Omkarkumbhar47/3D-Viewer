@@ -164,7 +164,7 @@ export default function ModelViewer({
 
   const extractParts = (model) => {
     const partsArray = [];
-    
+
     model.traverse((child) => {
       // if (child.isMesh) {
       //   console.log(child.material); // Check the material properties

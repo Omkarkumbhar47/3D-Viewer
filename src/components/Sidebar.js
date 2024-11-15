@@ -5,6 +5,7 @@ import studio1 from "./assets/image/studio_small_08-min.jpg";
 import studio2 from "./assets/image/photo_studio_01-min.jpg";
 import depot from "./assets/image/old_depot-min.jpg";
 import rogland from "./assets/image/rogland_moonlit_night-min.jpg";
+import ScreenshotControls from "./ScreenshotControls";
 const hdriOptions = [
   {
     name: "Outdoor",
@@ -213,6 +214,9 @@ const Sidebar = ({
               ))}
             </div>
           </div>
+          {/* <div className="mb-2">
+              <ScreenshotControls/>
+          </div> */}
         </div>
       )}
     </div>
