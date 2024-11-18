@@ -152,13 +152,14 @@ const Sidebar = ({
             />
           </div>
 
-          <div className="mb-2">
+          <div className="mb-2 py-2 border-top">
             <label>Environment Preset</label>
             <select
               onChange={handleEnvironmentChange}
               className="form-control form-control-sm mt-1 "
             >
-              <option value="">Select a Preset</option>
+              {/* <option value="">Select a Preset</option> */}
+              <option value="studio">Studio</option>
               <option value="apartment">Apartment</option>
               <option value="city">City</option>
               <option value="dawn">Dawn</option>
@@ -166,13 +167,12 @@ const Sidebar = ({
               <option value="lobby">Lobby</option>
               <option value="night">Night</option>
               <option value="park">Park</option>
-              <option value="studio">Studio</option>
               <option value="sunset">Sunset</option>
               <option value="warehouse">Warehouse</option>
             </select>
           </div>
 
-          <div className="mb-2">
+          <div className="mb-2  border-top py-2">
             <label>Background Environment</label>
             <div
               className="form-control form-control-sm mt-1 inputSidebar d-flex flex-wrap  gap-2"

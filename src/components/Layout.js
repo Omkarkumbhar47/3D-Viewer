@@ -10,7 +10,7 @@ export default function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [modelParts, setModelParts] = useState([]);
   const [backgroundColor, setBackgroundColor] = useState("#222222");
-  const [environment, setEnvironment] = useState(null);
+  const [environment, setEnvironment] = useState('studio');
   const [selectedHDRI, setSelectedHDRI] = useState(null);
   const [selectedPart, setSelectedPart] = useState(null);
   const [selectedSidebarPart, setSelectedSidebarPart] = useState(null);
