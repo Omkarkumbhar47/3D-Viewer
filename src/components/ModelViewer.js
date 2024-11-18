@@ -23,6 +23,8 @@ function Model({
   selectedPart,
   setSelectedPart,
   setSelectedSidebarPart,
+
+  showWireframe,
 }) {
   const { camera } = useThree();
   const modelRef = useRef();
@@ -99,6 +101,16 @@ function Model({
       });
     }
   }, [model, selectedPart, originalMaterials]);
+  useEffect(() => {
+    // Toggle wireframe
+    if (modelRef.current) {
+      modelRef.current.traverse((child) => {
+        if (child.material) {
+          child.material.wireframe = showWireframe;
+        }
+      });
+    }
+  }, [showWireframe]);
 
   return model ? (
     <group
@@ -126,6 +138,7 @@ export default function ModelViewer({
   setSelectedSidebarPart, // Function to set the selected part in the sidebar
   autoRotate,
   autoRotateSpeed,
+  showGrid,
 }) {
   const [model, setModel] = useState(null);
   const [error, setError] = useState(null);
@@ -133,6 +146,8 @@ export default function ModelViewer({
   const [parts, setParts] = useState([]);
   const [isMeshesSectionOpen, setIsMeshesSectionOpen] = useState(false); // Track if "Meshes" section is open
   const [selectedPart, setSelectedPart] = useState(null); // Track selected part
+  // const modelRef = useRef();
+  const gridHelperRef = useRef();
 
   const loadModel = (file) => {
     setError(null);
@@ -212,6 +227,13 @@ export default function ModelViewer({
     }
   }, [selectedSidebarPart]);
 
+  useEffect(() => {
+    // Toggle grid helper
+    if (gridHelperRef.current) {
+      gridHelperRef.current.visible = showGrid;
+    }
+  }, [showGrid]);
+
   return (
     <div
       id="model-viewer-container"
@@ -257,11 +279,22 @@ export default function ModelViewer({
               setSelectedSidebarPart={setSelectedSidebarPart} // Sync selected part to sidebar
             />
           </Suspense>
-          <OrbitControls autoRotate={autoRotate} autoRotateSpeed={autoRotateSpeed}/>
+          <OrbitControls
+            autoRotate={autoRotate}
+            autoRotateSpeed={autoRotateSpeed}
+          />
           {environment && <Environment preset={environment} />}
           {selectedHDRI && <Environment files={selectedHDRI} />}
           {/* <axesHelper args={[5]} /> */}
           {/* <Stats /> */}
+          {/* Grid Helper */}
+          {showGrid && (
+            <primitive
+              object={new THREE.GridHelper(10, 10)}
+              ref={gridHelperRef}
+              position={[0, -0.5, 0]}
+            />
+          )}
         </Canvas>
       ) : (
         <div className="d-flex text-center">

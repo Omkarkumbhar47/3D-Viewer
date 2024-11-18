@@ -10,12 +10,13 @@ export default function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [modelParts, setModelParts] = useState([]);
   const [backgroundColor, setBackgroundColor] = useState("#222222");
-  const [environment, setEnvironment] = useState('studio');
+  const [environment, setEnvironment] = useState("studio");
   const [selectedHDRI, setSelectedHDRI] = useState(null);
   const [selectedPart, setSelectedPart] = useState(null);
   const [selectedSidebarPart, setSelectedSidebarPart] = useState(null);
   const [autoRotate, setAutoRotate] = useState(false);
   const [autoRotateSpeed, setAutoRotateSpeed] = useState(2);
+  const [showGrid, setShowGrid] = useState(false);
 
   // Handle selecting a part from the sidebar
   const handleSelectPart = (part) => {
@@ -59,6 +60,8 @@ export default function Layout() {
             setAutoRotate={setAutoRotate}
             autoRotateSpeed={autoRotateSpeed}
             setAutoRotateSpeed={setAutoRotateSpeed}
+            showGrid={showGrid}
+            setShowGrid={setShowGrid}
           />
         )}
         <Loader />
@@ -73,6 +76,7 @@ export default function Layout() {
           selectedSidebarPart={selectedSidebarPart} // Track selected part
           autoRotate={autoRotate}
           autoRotateSpeed={autoRotateSpeed}
+          showGrid={showGrid}
         />
       </div>
       <footer

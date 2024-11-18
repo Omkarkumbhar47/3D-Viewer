@@ -1,6 +1,7 @@
 .SidebarElem {
   background-color: rgb(6, 6, 6);
   color: #e0e0e0;
+  transition: width 0.3s ease, transform 0.3s ease;
 }
 
 .partsColor {

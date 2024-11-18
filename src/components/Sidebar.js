@@ -46,19 +46,30 @@ const Sidebar = ({
   setAutoRotate,
   autoRotateSpeed,
   setAutoRotateSpeed,
+  showGrid,
+  setShowGrid,
 }) => {
   const [isMeshesOpen, setIsMeshesOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isDetailsOpen, setisDetailsOpen] = useState(false);
   const [selectedBackgroundType, setSelectedBackgroundType] = useState(null);
 
   const handleMeshesClick = () => {
     setIsMeshesOpen((prev) => !prev);
     setIsSettingsOpen(false);
+    setisDetailsOpen(false);
   };
 
   const handleSettingsClick = () => {
     setIsSettingsOpen((prev) => !prev);
     setIsMeshesOpen(false);
+    setisDetailsOpen(false);
+  };
+
+  const handleDetailsClick = () => {
+    setisDetailsOpen((prev) => !prev);
+    setIsMeshesOpen(false);
+    setIsSettingsOpen(false);
   };
 
   const handleBackgroundColorChange = (e) => {
@@ -104,7 +115,7 @@ const Sidebar = ({
       {isMeshesOpen && (
         <div
           className="d-flex flex-column mt-2 overflow-y-scroll sidebarScroller"
-          style={{ height: "calc(100vh -100px)", maxHeight: "545px" }}
+          style={{ height: "calc(100vh -100px)", maxHeight: "498px" }}
         >
           <div>
             {modelParts.map((part, index) => (
@@ -134,7 +145,7 @@ const Sidebar = ({
 
       {/* Settings Toggle */}
       <div
-        className="gap-2 d-flex align-items-center SidebarElem p-1 rounded-2 pointer"
+        className="mb-1 gap-2 d-flex align-items-center SidebarElem p-1 rounded-2 pointer"
         onClick={handleSettingsClick}
       >
         <i className="ri-settings-3-fill ViewerIcon"></i>
@@ -231,8 +242,8 @@ const Sidebar = ({
               />
             </label>
           </div> */}
-          <div className="mb-2 d-flex align-items-center border-top pt-2 gap-5">
-            <span className="">Auto Rotate</span>
+          <div className="mb-2 d-flex align-items-center border-top pt-2 ">
+            <span className="w-50">Auto Rotate</span>
             <input
               className=""
               type="checkbox"
@@ -258,8 +269,24 @@ const Sidebar = ({
               />
             </div>
           )}
+          <div className="mb-2 d-flex align-items-center border-top pt-2">
+            <span className="w-50">Grid</span>
+            <input
+              type="checkbox"
+              checked={showGrid}
+              onChange={(e) => setShowGrid(e.target.checked)}
+            />
+          </div>
         </div>
       )}
+      <div
+        className="mb-1 gap-2 d-flex align-items-center SidebarElem p-1 rounded-2 pointer"
+        onClick={handleDetailsClick}
+      >
+        <i className="ri-settings-3-fill ViewerIcon"></i>
+        <span>Details</span>
+      </div>
+      {isDetailsOpen && <> dsfas</>}  
     </div>
   );
 };
