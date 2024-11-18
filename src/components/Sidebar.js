@@ -42,6 +42,10 @@ const Sidebar = ({
   setSelectedHDRI,
   setSelectedSidebarPart, // Set selected part for syncing with ModelViewer
   selectedSidebarPart,
+  autoRotate,
+  setAutoRotate,
+  autoRotateSpeed,
+  setAutoRotateSpeed,
 }) => {
   const [isMeshesOpen, setIsMeshesOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -217,6 +221,43 @@ const Sidebar = ({
           {/* <div className="mb-2">
               <ScreenshotControls/>
           </div> */}
+          {/* <div className="mb-2">
+            <label>
+              <span>Auto Rotate</span>
+              <input
+                type="checkbox"
+                checked={autoRotate}
+                onChange={(e) => setAutoRotate(e.target.checked)}
+              />
+            </label>
+          </div> */}
+          <div className="mb-2 d-flex align-items-center border-top pt-2 gap-5">
+            <span className="">Auto Rotate</span>
+            <input
+              className=""
+              type="checkbox"
+              checked={autoRotate}
+              onChange={(e) => setAutoRotate(e.target.checked)}
+            />
+          </div>
+
+          {/* Auto Rotate Speed */}
+          {autoRotate && (
+            <div className="position-relative ps-2">
+              <label className="d-block">
+                Rotate Speed: {autoRotateSpeed.toFixed(1)}
+              </label>
+              <input
+                type="range"
+                min="0.1"
+                max="10"
+                step="0.1"
+                value={autoRotateSpeed}
+                onChange={(e) => setAutoRotateSpeed(parseFloat(e.target.value))}
+                className=" win10-thumb position-absolutive"
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

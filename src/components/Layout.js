@@ -14,6 +14,8 @@ export default function Layout() {
   const [selectedHDRI, setSelectedHDRI] = useState(null);
   const [selectedPart, setSelectedPart] = useState(null);
   const [selectedSidebarPart, setSelectedSidebarPart] = useState(null);
+  const [autoRotate, setAutoRotate] = useState(false);
+  const [autoRotateSpeed, setAutoRotateSpeed] = useState(2);
 
   // Handle selecting a part from the sidebar
   const handleSelectPart = (part) => {
@@ -53,6 +55,10 @@ export default function Layout() {
             selectedPart={selectedPart}
             setSelectedSidebarPart={setSelectedSidebarPart}
             selectedSidebarPart={selectedSidebarPart}
+            autoRotate={autoRotate}
+            setAutoRotate={setAutoRotate}
+            autoRotateSpeed={autoRotateSpeed}
+            setAutoRotateSpeed={setAutoRotateSpeed}
           />
         )}
         <Loader />
@@ -65,6 +71,8 @@ export default function Layout() {
           onSelectPart={handleSelectPart}
           setSelectedSidebarPart={setSelectedSidebarPart} // Pass this down
           selectedSidebarPart={selectedSidebarPart} // Track selected part
+          autoRotate={autoRotate}
+          autoRotateSpeed={autoRotateSpeed}
         />
       </div>
       <footer

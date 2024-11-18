@@ -124,6 +124,8 @@ export default function ModelViewer({
   selectedHDRI,
   selectedSidebarPart, // Add this prop for selected part from the sidebar
   setSelectedSidebarPart, // Function to set the selected part in the sidebar
+  autoRotate,
+  autoRotateSpeed,
 }) {
   const [model, setModel] = useState(null);
   const [error, setError] = useState(null);
@@ -255,7 +257,7 @@ export default function ModelViewer({
               setSelectedSidebarPart={setSelectedSidebarPart} // Sync selected part to sidebar
             />
           </Suspense>
-          <OrbitControls />
+          <OrbitControls autoRotate={autoRotate} autoRotateSpeed={autoRotateSpeed}/>
           {environment && <Environment preset={environment} />}
           {selectedHDRI && <Environment files={selectedHDRI} />}
           {/* <axesHelper args={[5]} /> */}
