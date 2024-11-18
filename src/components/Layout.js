@@ -4,6 +4,7 @@ import Footer from "../components/Footer.js";
 import ModelViewer from "./ModelViewer";
 import Sidebar from "./Sidebar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Loader from "./Loder";
 
 export default function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -54,6 +55,7 @@ export default function Layout() {
             selectedSidebarPart={selectedSidebarPart}
           />
         )}
+        <Loader />
         <ModelViewer
           onModelLoad={handleModelLoad}
           backgroundColor={backgroundColor}
@@ -65,7 +67,10 @@ export default function Layout() {
           selectedSidebarPart={selectedSidebarPart} // Track selected part
         />
       </div>
-      <footer className="d-flex justify-content-center align-items-center px-sm-5" style={{ height: "50px" }}>
+      <footer
+        className="d-flex justify-content-center align-items-center px-sm-5"
+        style={{ height: "50px" }}
+      >
         <Footer />
       </footer>
     </div>

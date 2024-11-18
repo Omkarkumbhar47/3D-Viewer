@@ -6,13 +6,17 @@ import React, {
   useRef,
 } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
-import { OrbitControls, Center, Environment, Stats } from "@react-three/drei";
+import {
+  OrbitControls,
+  Center,
+  Environment,
+  Stats,
+  Html,
+} from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import * as THREE from "three";
-import CustomLoader from "./Loder";
-import { Html, useProgress } from "@react-three/drei";
 
 function Model({
   model,
@@ -166,7 +170,7 @@ export default function ModelViewer({
   const Loder = () => {
     return (
       <Html center>
-        <div style={{ color: '#fff' }}>Loading...</div>
+        <div style={{ color: "#fff" }}>Loading...</div>
       </Html>
     );
   };
@@ -175,15 +179,6 @@ export default function ModelViewer({
     const partsArray = [];
 
     model.traverse((child) => {
-      // if (child.isMesh) {
-      //   console.log(child.material); // Check the material properties
-      //   if (!child.material.map) {
-      //     console.log('No texture map found on');
-      //   }
-      //   else{
-      //     console.log('Texture map found on', child.name); // Debugging line to confirm texture mapping
-      //   }
-      // }
       if (child.isMesh) {
         partsArray.push({ name: child.name || "Unnamed Part", mesh: child });
       }
