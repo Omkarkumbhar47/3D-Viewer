@@ -20,27 +20,18 @@
   transition: width 0.3s ease, transform 0.3s ease;
 }
 
-.partsColor {
-  cursor: pointer;
-}
-
-.partsColor:hover {
-  background-color: #7d809b;
-}
 .inputSidebar {
   background-color: #222222 !important;
   width: 90px;
   height: 27px;
-
 }
 
 .inputSidebar:focus {
   border-color: #7d809b !important;
   outline: 0;
-  /* box-shadow: 0 0 0 0.25rem #7d809b83 !important; */
 }
 .highlighted {
-  background-color: lightblue; /* Highlight color */
+  background-color: lightblue;
   color: #222222;
   font-weight: bold;
   cursor: pointer;
