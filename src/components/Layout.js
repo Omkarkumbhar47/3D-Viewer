@@ -44,9 +44,10 @@ export default function Layout() {
       <header className="text-center py-2 px-4">
         <Header />
       </header>
-      <div className="d-flex flex-grow-1">
+      <div className="d-flex flex-grow-1 ">
         {isSidebarOpen && (
           <Sidebar
+            className="d-md-block d-noen"
             modelParts={modelParts}
             toggleVisibility={handleToggleVisibility}
             setBackgroundColor={setBackgroundColor}

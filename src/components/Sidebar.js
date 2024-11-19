@@ -6,6 +6,7 @@ import studio2 from "./assets/image/photo_studio_01-min.jpg";
 import depot from "./assets/image/old_depot-min.jpg";
 import rogland from "./assets/image/rogland_moonlit_night-min.jpg";
 import ScreenshotControls from "./ScreenshotControls";
+import { hover } from "@testing-library/user-event/dist/hover";
 const hdriOptions = [
   {
     name: "Outdoor",
@@ -83,6 +84,7 @@ const Sidebar = ({
 
   const handleVisibilityToggle = (part) => {
     setSelectedSidebarPart(part.mesh); // Select part in ModelViewer
+    // setSelectedSidebarPart((part.mesh) => !part.mesh);
   };
 
   const handleEnvironmentChange = (e) => {
@@ -105,7 +107,9 @@ const Sidebar = ({
       style={{ height: "calc(100vh - 109px)", minWidth: "250px" }}
     >
       <div
-        className=" mb-1 gap-2 d-flex align-items-center SidebarElem p-1 rounded-2 pointer"
+        className={`mb-1 gap-2 d-flex align-items-center  p-1 rounded-2 pointer ${
+          isMeshesOpen === true ? "SidebarElem1" : "SidebarElem"
+        }`}
         onClick={handleMeshesClick}
       >
         <i className="ri-box-3-fill ViewerIcon"></i>
@@ -118,11 +122,10 @@ const Sidebar = ({
           style={{ height: "calc(100vh -100px)", maxHeight: "498px" }}
         >
           <div>
-            {modelParts.map((part, index) => (
+            {modelParts.map((part) => (
               <div
-                // key={index}
                 key={part.mesh.name}
-                className={`d-flex justify-content-between align-items-center mb-1 p-1 ${
+                className={`d-flex justify-content-between align-items-center mb-1 p-1 meshesElem ${
                   selectedSidebarPart === part.mesh ? "highlighted" : ""
                 }`}
                 onClick={() => handleVisibilityToggle(part)} // Set selected part on click
@@ -131,9 +134,9 @@ const Sidebar = ({
                 <div>
                   <span onClick={() => toggleVisibility(part.mesh)}>
                     {part.mesh.visible ? (
-                      <i className="ri-eye-off-line"></i>
-                    ) : (
                       <i className="ri-eye-line"></i>
+                    ) : (
+                      <i className="ri-eye-off-line"></i>
                     )}
                   </span>
                 </div>
@@ -145,7 +148,9 @@ const Sidebar = ({
 
       {/* Settings Toggle */}
       <div
-        className="mb-1 gap-2 d-flex align-items-center SidebarElem p-1 rounded-2 pointer"
+        className={`mb-1 gap-2 d-flex align-items-center  p-1 rounded-2 pointer ${
+          isSettingsOpen === true ? "SidebarElem1" : "SidebarElem"
+        }`}
         onClick={handleSettingsClick}
       >
         <i className="ri-settings-3-fill ViewerIcon"></i>
@@ -153,108 +158,95 @@ const Sidebar = ({
       </div>
 
       {isSettingsOpen && (
-        <div className="d-flex flex-column mt-2">
-          <div className="mb-2">
-            <label>Background Color</label>
-            <input
-              type="color"
-              onChange={handleBackgroundColorChange}
-              className="form-control form-control-sm mt-1 border-0 inputSidebar"
-            />
+        <div>
+          <div className="d-flex w-100 text-center py-1">
+            <div className="w-50">
+              <label>
+                Background
+                <br />
+                Color
+              </label>
+              <input
+                type="color"
+                onChange={handleBackgroundColorChange}
+                className="inputSidebar w-75 text-center border-0 mt-1"
+              />
+            </div>
+            <div className="border-start w-50 p-0">
+              <label>
+                Environment
+                <br />
+                Preset
+              </label>
+              <select
+                onChange={handleEnvironmentChange}
+                className="w-75 text-center inputSidebar outline mt-1"
+              >
+                <option value="studio">Studio</option>
+                <option value="apartment">Apartment</option>
+                <option value="city">City</option>
+                <option value="dawn">Dawn</option>
+                <option value="forest">Forest</option>
+                <option value="lobby">Lobby</option>
+                <option value="night">Night</option>
+                <option value="park">Park</option>
+                <option value="sunset">Sunset</option>
+                <option value="warehouse">Warehouse</option>
+              </select>
+            </div>
           </div>
 
-          <div className="mb-2 py-2 border-top">
-            <label>Environment Preset</label>
-            <select
-              onChange={handleEnvironmentChange}
-              className="form-control form-control-sm mt-1 "
-            >
-              {/* <option value="">Select a Preset</option> */}
-              <option value="studio">Studio</option>
-              <option value="apartment">Apartment</option>
-              <option value="city">City</option>
-              <option value="dawn">Dawn</option>
-              <option value="forest">Forest</option>
-              <option value="lobby">Lobby</option>
-              <option value="night">Night</option>
-              <option value="park">Park</option>
-              <option value="sunset">Sunset</option>
-              <option value="warehouse">Warehouse</option>
-            </select>
-          </div>
-
-          <div className="mb-2  border-top py-2">
+          <div className="py-1">
             <label>Background Environment</label>
-            <div
-              className="form-control form-control-sm mt-1 inputSidebar d-flex flex-wrap  gap-2"
-              style={{
-                height: "190px",
-                overflowY: "auto", // Enables vertical scroll if content overflows
-                padding: "8px",
-              }}
-            >
+            <div className="inputSidebar border-0 py-1 overflow-hidden row w-100 h-auto text-center">
               {hdriOptions.map((hdri) => (
                 <div
-                  className=" d-flex flex-column align-items-center pointer"
+                  className="pointer col-4 p-1 m-0 "
                   key={hdri.url}
+                  onClick={() => handleHDRISelection(hdri.url)}
+                  role="button"
+                  tabIndex="0"
+                  aria-label={`Select HDRI: ${hdri.name}`}
                 >
-                  <div
-                    key={hdri.name}
-                    className=" d-flex flex-column align-items-center pointer  overflow-hidden"
-                    onClick={() => handleHDRISelection(hdri.url)}
-                    style={{
-                      height: "60px",
-                      width: "60px",
-                      borderRadius: "2px",
-                    }}
-                  >
+                  <div>
                     <img
                       src={hdri.thumbnail}
                       alt={hdri.name}
-                      className=""
                       style={{
-                        height: "60px",
-                        width: "60px",
+                        height: "50px",
+                        width: "-webkit-fill-available",
                         objectFit: "cover",
+                        borderRadius: "2px",
                       }}
                     />
-                  </div>
-                  <div
-                    className="text-center"
-                    style={{ color: "white", fontSize: "0.8rem" }}
-                  >
-                    {hdri.name}
+                    <div style={{ fontSize: "0.8rem" }}>{hdri.name}</div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          {/* <div className="mb-2">
-              <ScreenshotControls/>
-          </div> */}
-          {/* <div className="mb-2">
-            <label>
-              <span>Auto Rotate</span>
+          <div className="d-flex py-1">
+            <div className="d-flex align-items-center col-6 p-0 m-0 gap-3">
+              <span className="">Auto Rotate</span>
               <input
                 type="checkbox"
                 checked={autoRotate}
                 onChange={(e) => setAutoRotate(e.target.checked)}
               />
-            </label>
-          </div> */}
-          <div className="mb-2 d-flex align-items-center border-top pt-2 ">
-            <span className="w-50">Auto Rotate</span>
-            <input
-              className=""
-              type="checkbox"
-              checked={autoRotate}
-              onChange={(e) => setAutoRotate(e.target.checked)}
-            />
+            </div>
+
+            <div className="d-flex align-items-center col-6 p-0 m-0 gap-3">
+              <span className="">Grid</span>
+              <input
+                type="checkbox"
+                checked={showGrid}
+                onChange={(e) => setShowGrid(e.target.checked)}
+              />
+            </div>
           </div>
 
-          {/* Auto Rotate Speed */}
           {autoRotate && (
-            <div className="position-relative ps-2">
+            <div className=" ps-2">
               <label className="d-block">
                 Rotate Speed: {autoRotateSpeed.toFixed(1)}
               </label>
@@ -265,28 +257,31 @@ const Sidebar = ({
                 step="0.1"
                 value={autoRotateSpeed}
                 onChange={(e) => setAutoRotateSpeed(parseFloat(e.target.value))}
-                className=" win10-thumb position-absolutive"
+                className=" win10-thumb "
               />
             </div>
           )}
-          <div className="mb-2 d-flex align-items-center border-top pt-2">
-            <span className="w-50">Grid</span>
-            <input
-              type="checkbox"
-              checked={showGrid}
-              onChange={(e) => setShowGrid(e.target.checked)}
-            />
-          </div>
+
+          {/* <div className="mb-2">
+              <ScreenshotControls/>
+          </div> */}
         </div>
       )}
+
       <div
-        className="mb-1 gap-2 d-flex align-items-center SidebarElem p-1 rounded-2 pointer"
+        className={`gap-2 d-flex align-items-center  p-1 rounded-2 pointer ${
+          isDetailsOpen === true ? "SidebarElem1" : "SidebarElem"
+        }`}
         onClick={handleDetailsClick}
       >
         <i className="ri-settings-3-fill ViewerIcon"></i>
         <span>Details</span>
       </div>
-      {isDetailsOpen && <> dsfas</>}  
+      {isDetailsOpen && (
+        <div>
+          <div className="py-1">Working...</div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,22 @@
 .SidebarElem {
   background-color: rgb(6, 6, 6);
   color: #e0e0e0;
+}
+
+.SidebarElem1 {
+  color: #00ffff;
+  background-color: rgb(6, 6, 6);
+  transition: width 0.3s ease, transform 0.3s ease;
+}
+.SidebarElem:hover {
+  color: #00ffff;
+}
+.meshesElem:hover {
+  background-color: lightblue;
+  color: #222222;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 2px;
   transition: width 0.3s ease, transform 0.3s ease;
 }
 
@@ -13,13 +29,15 @@
 }
 .inputSidebar {
   background-color: #222222 !important;
-  border: 0 !important;
+  width: 90px;
+  height: 27px;
+
 }
 
 .inputSidebar:focus {
   border-color: #7d809b !important;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem #7d809b83 !important;
+  /* box-shadow: 0 0 0 0.25rem #7d809b83 !important; */
 }
 .highlighted {
   background-color: lightblue; /* Highlight color */
@@ -27,6 +45,7 @@
   font-weight: bold;
   cursor: pointer;
   border-radius: 2px;
+  transition: width 0.3s ease, transform 0.3s ease;
 }
 
 /* input range */
