@@ -235,11 +235,11 @@ export default function ModelViewer({
   }, [showGrid]);
 
   return (
+    // <div className="">
     <div
       id="model-viewer-container"
-      className="model-viewer CustomBorder rounded p-2 d-flex align-items-center justify-content-center"
-      // onDrop={onDrop}
-      style={{ width: "100%", height: "100%", position: "relative" }}
+      className="model-viewer CustomBorder rounded  d-flex align-items-center justify-content-center position-relative"
+      style={{ width: "100%", height: "100%" }}
       onDrop={(event) => {
         event.preventDefault();
         setIsDragActive(false);
@@ -248,9 +248,23 @@ export default function ModelViewer({
       }}
     >
       {model ? (
+        <div
+          className="bg-danger top-0 position-absolute p-1  z-3 mx-2 my-1"
+          style={{ height: "40px" }}
+        >
+          dsv
+        </div>
+      ) : null}
+      {model ? (
         <Canvas
           camera={{ position: [0, 1, 5], fov: 50 }}
-          style={{ width: "100%", height: "100%", background: backgroundColor }}
+          className="bottom-0"
+          style={{
+            width: "100%",
+            height: "calc(100% - 40px)",
+            bottom : "0",
+            background: backgroundColor,
+          }}
         >
           {backgroundColor && (
             <color attach="background" args={[backgroundColor]} />
@@ -324,5 +338,6 @@ export default function ModelViewer({
         </div>
       )}
     </div>
+    // </div>
   );
 }
