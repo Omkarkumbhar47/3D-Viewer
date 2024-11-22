@@ -23,10 +23,10 @@ function Model({
   selectedPart,
   setSelectedPart,
   setSelectedSidebarPart,
-
   showWireframe,
 }) {
-  const { camera } = useThree();
+  // const { camera } = useThree();
+  const { camera, controls } = useThree();
   const modelRef = useRef();
   const [originalMaterials, setOriginalMaterials] = useState([]);
 
@@ -146,8 +146,10 @@ export default function ModelViewer({
   const [parts, setParts] = useState([]);
   const [isMeshesSectionOpen, setIsMeshesSectionOpen] = useState(false); // Track if "Meshes" section is open
   const [selectedPart, setSelectedPart] = useState(null); // Track selected part
-  // const modelRef = useRef();
+
+  const modelRef = useRef();
   const gridHelperRef = useRef();
+
 
   const loadModel = (file) => {
     setError(null);
@@ -220,6 +222,52 @@ export default function ModelViewer({
     if (file) loadModel(file);
   };
 
+  // const handleModelAction = (action) => {
+  //   if (!modelRef.current) return;
+
+  //   const { current: model } = modelRef;
+  //   const rotationStep = Math.PI / 4;
+
+  //   switch (action) {
+  //     case "flipX":
+  //       model.scale.x *= -1;
+  //       break;
+  //     case "flipY":
+  //       model.scale.y *= -1;
+  //       break;
+  //     case "rotateX":
+  //       model.rotation.x += rotationStep;
+  //       break;
+  //     case "rotateY":
+  //       model.rotation.y += rotationStep;
+  //       break;
+  //     case "fitToScreen":
+  //       fitModelToScreen();
+  //       break;
+  //     default:
+  //       console.warn("Unknown action:", action);
+  //   }
+  // };
+
+  // const fitModelToScreen = () => {
+  //   if (!modelRef.current || !camera || !controls) return;
+
+  //   const box = new THREE.Box3().setFromObject(modelRef.current);
+  //   const size = box.getSize(new THREE.Vector3());
+  //   const center = box.getCenter(new THREE.Vector3());
+
+  //   const maxDim = Math.max(size.x, size.y, size.z);
+  //   const fov = camera.fov * (Math.PI / 180);
+  //   const cameraZ = Math.abs(maxDim / (2 * Math.tan(fov / 2)));
+  //   const minZ = box.min.z;
+  //   const cameraToFarEdge = minZ < 0 ? -minZ + cameraZ : cameraZ;
+
+  //   camera.position.set(center.x, center.y, cameraToFarEdge * 1.5);
+  //   camera.lookAt(center);
+
+  //   if (controls) controls.target.set(center.x, center.y, center.z);
+  // };
+
   // Update selected part when part is clicked in Sidebar
   useEffect(() => {
     if (selectedSidebarPart) {
@@ -249,20 +297,34 @@ export default function ModelViewer({
     >
       {model ? (
         <div
-          className="bg-danger top-0 position-absolute p-1  z-3 mx-2 my-1"
+          className="top-0 position-absolute p-1 w-100 canvasNavBar d-flex gap-3"
           style={{ height: "40px" }}
         >
-          dsv
+          {/* <span onClick={() => handleModelAction("flipX")}>
+            <i className="ri-arrow-left-right-line iconsCan"></i>
+          </span>
+          <span onClick={() => handleModelAction("flipY")}>
+            <i className="ri-arrow-up-down-line iconsCan"></i>
+          </span>
+          <span onClick={() => handleModelAction("rotateX")}>
+            <i className="ri-rotate-left-line iconsCan"></i>
+          </span>
+          <span onClick={() => handleModelAction("rotateY")}>
+            <i className="ri-rotate-right-line iconsCan"></i>
+          </span>
+          <span onClick={() => handleModelAction("fitToScreen")}>
+            <i className="ri-expand-line iconsCan"></i>
+          </span> */}
         </div>
       ) : null}
       {model ? (
         <Canvas
           camera={{ position: [0, 1, 5], fov: 50 }}
-          className="bottom-0"
+          className=""
           style={{
             width: "100%",
+            top: "20px",
             height: "calc(100% - 40px)",
-            bottom : "0",
             background: backgroundColor,
           }}
         >

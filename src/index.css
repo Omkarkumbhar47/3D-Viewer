@@ -110,3 +110,21 @@ body {
 .pointer{
   cursor: pointer;
 }
+
+.canvasNavBar{
+  background-color: #7d809b7f;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.canvasNavBar .iconsCan {
+  font-size: 21px;
+  cursor: pointer;
+  padding: 4px 10px 4.3px 10px ;
+}
+.canvasNavBar .iconsCan:hover{
+  background-color: #222222;
+  color:#e0e0e0 ;
+}

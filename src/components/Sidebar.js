@@ -274,7 +274,7 @@ const Sidebar = ({
         }`}
         onClick={handleDetailsClick}
       >
-        <i className="ri-settings-3-fill ViewerIcon"></i>
+        <i class="ri-info-card-fill ViewerIcon"></i>
         <span>Details</span>
       </div>
       {isDetailsOpen && (
