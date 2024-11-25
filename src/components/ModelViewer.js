@@ -17,6 +17,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import * as THREE from "three";
+import { invalidate } from "@react-three/fiber";
 
 function Model({
   model,
@@ -24,11 +25,92 @@ function Model({
   setSelectedPart,
   setSelectedSidebarPart,
   showWireframe,
+  onAction, // Callback to handle model actions from the parent
 }) {
   // const { camera } = useThree();
   const { camera, controls } = useThree();
   const modelRef = useRef();
+  const [action, setAction] = useState(null);
+
   const [originalMaterials, setOriginalMaterials] = useState([]);
+
+  // Fit model to screen logic
+  const fitModelToScreen = useCallback(() => {
+    if (!modelRef.current || !camera || !controls) {
+      console.error("Missing model, camera, or controls!");
+      return;
+    }
+  
+    const box = new THREE.Box3().setFromObject(modelRef.current);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+  
+    console.log("Model bounding box size:", size);
+    console.log("Model bounding box center:", center);
+  
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const fov = camera.fov * (Math.PI / 180);
+    const cameraZ = Math.abs(maxDim / (2 * Math.tan(fov / 2)));
+    const minZ = box.min.z;
+    const cameraToFarEdge = minZ < 0 ? -minZ + cameraZ : cameraZ;
+  
+    camera.position.set(center.x, center.y, cameraToFarEdge * 1.5);
+    console.log("Camera position:", camera.position);
+  
+    camera.lookAt(center);
+    if (controls) controls.target.set(center.x, center.y, center.z);
+  
+    invalidate(); // Force canvas re-render
+  }, [camera, controls]);
+  
+
+  // Handle model actions
+  const handleModelAction = (action = null) => {
+    if (!modelRef.current) {
+        console.error("Model reference is null or undefined!");
+        return;
+    }
+
+    const { current: model } = modelRef;
+    const rotationStep = Math.PI / 4;
+
+    if (!action) {
+        console.warn("No action provided!");
+        return;
+    }
+
+    console.log("Triggering action:", action);
+
+    switch (action) {
+        case "flipX":
+            model.scale.x *= -1;
+            break;
+        case "flipY":
+            model.scale.y *= -1;
+            break;
+        case "rotateX":
+            model.rotation.x += rotationStep;
+            break;
+        case "rotateY":
+            model.rotation.y += rotationStep;
+            break;
+        case "fitToScreen":
+            fitModelToScreen();
+            break;
+        default:
+            console.warn("Unknown action:", action);
+    }
+    invalidate(); // Force canvas re-render
+};
+
+
+  // Expose the action handler to the parent component
+  useEffect(() => {
+    if (onAction) {
+      console.log("Setting action handler in parent.");
+      onAction(handleModelAction);
+    }
+  }, [onAction, handleModelAction]);
 
   // Store original material properties when the model is loaded
   useEffect(() => {
@@ -139,6 +221,7 @@ export default function ModelViewer({
   autoRotate,
   autoRotateSpeed,
   showGrid,
+  setAction,
 }) {
   const [model, setModel] = useState(null);
   const [error, setError] = useState(null);
@@ -146,10 +229,15 @@ export default function ModelViewer({
   const [parts, setParts] = useState([]);
   const [isMeshesSectionOpen, setIsMeshesSectionOpen] = useState(false); // Track if "Meshes" section is open
   const [selectedPart, setSelectedPart] = useState(null); // Track selected part
-
+  const [handleModelAction, setHandleModelAction] = useState(null);
   const modelRef = useRef();
+
   const gridHelperRef = useRef();
 
+  const triggerModelAction = (action) => {
+    console.log("Triggering action from parent:", action);
+    setAction(action); // Assuming this updates the `onAction` prop for the Model
+};
 
   const loadModel = (file) => {
     setError(null);
@@ -186,13 +274,13 @@ export default function ModelViewer({
         setError("Failed to load model. Please try a different file.");
       });
   };
-  const Loder = () => {
-    return (
-      <Html center>
-        <div style={{ color: "#fff" }}>Loading...</div>
-      </Html>
-    );
-  };
+  // const Loder = () => {
+  //   return (
+  //     <Html center>
+  //       <div style={{ color: "#fff" }}>Loading...</div>
+  //     </Html>
+  //   );
+  // };
 
   const extractParts = (model) => {
     const partsArray = [];
@@ -222,52 +310,6 @@ export default function ModelViewer({
     if (file) loadModel(file);
   };
 
-  // const handleModelAction = (action) => {
-  //   if (!modelRef.current) return;
-
-  //   const { current: model } = modelRef;
-  //   const rotationStep = Math.PI / 4;
-
-  //   switch (action) {
-  //     case "flipX":
-  //       model.scale.x *= -1;
-  //       break;
-  //     case "flipY":
-  //       model.scale.y *= -1;
-  //       break;
-  //     case "rotateX":
-  //       model.rotation.x += rotationStep;
-  //       break;
-  //     case "rotateY":
-  //       model.rotation.y += rotationStep;
-  //       break;
-  //     case "fitToScreen":
-  //       fitModelToScreen();
-  //       break;
-  //     default:
-  //       console.warn("Unknown action:", action);
-  //   }
-  // };
-
-  // const fitModelToScreen = () => {
-  //   if (!modelRef.current || !camera || !controls) return;
-
-  //   const box = new THREE.Box3().setFromObject(modelRef.current);
-  //   const size = box.getSize(new THREE.Vector3());
-  //   const center = box.getCenter(new THREE.Vector3());
-
-  //   const maxDim = Math.max(size.x, size.y, size.z);
-  //   const fov = camera.fov * (Math.PI / 180);
-  //   const cameraZ = Math.abs(maxDim / (2 * Math.tan(fov / 2)));
-  //   const minZ = box.min.z;
-  //   const cameraToFarEdge = minZ < 0 ? -minZ + cameraZ : cameraZ;
-
-  //   camera.position.set(center.x, center.y, cameraToFarEdge * 1.5);
-  //   camera.lookAt(center);
-
-  //   if (controls) controls.target.set(center.x, center.y, center.z);
-  // };
-
   // Update selected part when part is clicked in Sidebar
   useEffect(() => {
     if (selectedSidebarPart) {
@@ -296,82 +338,90 @@ export default function ModelViewer({
       }}
     >
       {model ? (
-        <div
-          className="top-0 position-absolute p-1 w-100 canvasNavBar d-flex gap-3"
-          style={{ height: "40px" }}
-        >
-          {/* <span onClick={() => handleModelAction("flipX")}>
-            <i className="ri-arrow-left-right-line iconsCan"></i>
-          </span>
-          <span onClick={() => handleModelAction("flipY")}>
-            <i className="ri-arrow-up-down-line iconsCan"></i>
-          </span>
-          <span onClick={() => handleModelAction("rotateX")}>
-            <i className="ri-rotate-left-line iconsCan"></i>
-          </span>
-          <span onClick={() => handleModelAction("rotateY")}>
-            <i className="ri-rotate-right-line iconsCan"></i>
-          </span>
-          <span onClick={() => handleModelAction("fitToScreen")}>
-            <i className="ri-expand-line iconsCan"></i>
-          </span> */}
-        </div>
-      ) : null}
-      {model ? (
-        <Canvas
-          camera={{ position: [0, 1, 5], fov: 50 }}
-          className=""
-          style={{
-            width: "100%",
-            top: "20px",
-            height: "calc(100% - 40px)",
-            background: backgroundColor,
-          }}
-        >
-          {backgroundColor && (
-            <color attach="background" args={[backgroundColor]} />
-          )}
+        <>
+          <div
+            className="top-0 position-absolute p-1 w-100 canvasNavBar d-flex gap-3"
+            style={{ height: "40px" }}
+          >
+            {/* <span onClick={() => triggerModelAction("flipX")}>
+              <i className="ri-arrow-left-right-line iconsCan"></i>
+            </span>
+            <span onClick={() => triggerModelAction("flipY")}>
+              <i className="ri-arrow-up-down-line iconsCan"></i>
+            </span>
+            <span onClick={() => triggerModelAction("rotateX")}>
+              <i className="ri-arrow-left-right-line iconsCan"></i>
+            </span>
+            <span onClick={() => triggerModelAction("rotateY")}>
+              <i className="ri-arrow-left-right-line iconsCan"></i>
+            </span>
+            <span onClick={() => triggerModelAction("fitToScreen")}>
+              <i className="ri-arrow-left-right-line iconsCan"></i>
+            </span> */}
+            <span onClick={() => triggerModelAction("flipX")}>Flip X</span>
+            <span onClick={() => triggerModelAction("flipY")}>Flip Y</span>
+            <span onClick={() => triggerModelAction("rotateX")}>Rotate X</span>
+            <span onClick={() => triggerModelAction("rotateY")}>Rotate Y</span>
+            <span onClick={() => triggerModelAction("fitToScreen")}>Fit</span>
+          </div>
 
-          {selectedHDRI && (
-            <Environment
-              files={selectedHDRI}
-              background
-              // backgroundBlurriness={0.5}
+          <Canvas
+            camera={{ position: [0, 1, 5], fov: 50 }}
+            className=""
+            style={{
+              width: "100%",
+              top: "20px",
+              height: "calc(100% - 40px)",
+              background: backgroundColor,
+            }}
+          >
+            {backgroundColor && (
+              <color attach="background" args={[backgroundColor]} />
+            )}
+
+            {selectedHDRI && (
+              <Environment
+                files={selectedHDRI}
+                background
+                // backgroundBlurriness={0.5}
+              />
+            )}
+            <ambientLight intensity={1.0} />
+            <directionalLight position={[0, 20, 0]} intensity={1.0} />
+            <directionalLight position={[0, -20, 0]} intensity={1.0} />
+            <directionalLight position={[-20, 0, 0]} intensity={1.0} />
+            <directionalLight position={[20, 0, 0]} intensity={1.0} />
+            <directionalLight position={[0, 0, 20]} intensity={1.0} />
+            <directionalLight position={[0, 0, -20]} intensity={1.0} />
+            {/* <Suspense fallback={<Loder />}> */}
+            <Suspense fallback={<div>Loading...</div>}>
+              <Model
+                model={model}
+                onClickPart={handleClickPart}
+                selectedPart={selectedPart} // Pass selected part
+                setSelectedPart={setSelectedPart} // Pass function to update selected part
+                setSelectedSidebarPart={setSelectedSidebarPart} // Sync selected part to sidebar
+                onAction={setHandleModelAction}
+              />
+            </Suspense>
+            <OrbitControls
+              autoRotate={autoRotate}
+              autoRotateSpeed={autoRotateSpeed}
             />
-          )}
-          <ambientLight intensity={1.0} />
-          <directionalLight position={[0, 20, 0]} intensity={1.0} />
-          <directionalLight position={[0, -20, 0]} intensity={1.0} />
-          <directionalLight position={[-20, 0, 0]} intensity={1.0} />
-          <directionalLight position={[20, 0, 0]} intensity={1.0} />
-          <directionalLight position={[0, 0, 20]} intensity={1.0} />
-          <directionalLight position={[0, 0, -20]} intensity={1.0} />
-          <Suspense fallback={<Loder />}>
-            <Model
-              model={model}
-              onClickPart={handleClickPart}
-              selectedPart={selectedPart} // Pass selected part
-              setSelectedPart={setSelectedPart} // Pass function to update selected part
-              setSelectedSidebarPart={setSelectedSidebarPart} // Sync selected part to sidebar
-            />
-          </Suspense>
-          <OrbitControls
-            autoRotate={autoRotate}
-            autoRotateSpeed={autoRotateSpeed}
-          />
-          {environment && <Environment preset={environment} />}
-          {selectedHDRI && <Environment files={selectedHDRI} />}
-          {/* <axesHelper args={[5]} /> */}
-          {/* <Stats /> */}
-          {/* Grid Helper */}
-          {showGrid && (
-            <primitive
-              object={new THREE.GridHelper(10, 10)}
-              ref={gridHelperRef}
-              position={[0, -0.5, 0]}
-            />
-          )}
-        </Canvas>
+            {environment && <Environment preset={environment} />}
+            {selectedHDRI && <Environment files={selectedHDRI} />}
+            {/* <axesHelper args={[5]} /> */}
+            {/* <Stats /> */}
+            {/* Grid Helper */}
+            {showGrid && (
+              <primitive
+                object={new THREE.GridHelper(10, 10)}
+                ref={gridHelperRef}
+                position={[0, -0.5, 0]}
+              />
+            )}
+          </Canvas>
+        </>
       ) : (
         <div className="d-flex text-center">
           {isDragActive ? (
