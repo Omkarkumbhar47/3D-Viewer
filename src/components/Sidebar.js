@@ -119,7 +119,7 @@ const Sidebar = ({
       {isMeshesOpen && (
         <div
           className="d-flex flex-column mt-2 overflow-y-scroll sidebarScroller"
-          style={{ height: "calc(100vh -100px)", maxHeight: "498px" }}
+          style={{ height: "calc(100vh -100px)", maxHeight: "450px" }}
         >
           <div>
             {modelParts.map((part) => (

@@ -5,210 +5,30 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
-import {
-  OrbitControls,
-  Center,
-  Environment,
-  Stats,
-  Html,
-} from "@react-three/drei";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { OrbitControls, Center, Environment } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import * as THREE from "three";
-import { invalidate } from "@react-three/fiber";
+import FileUploader from "./FileUploader";
+import ControlsBar from "./ControlsBar";
+import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
 
-function Model({
-  model,
-  selectedPart,
-  setSelectedPart,
-  setSelectedSidebarPart,
-  showWireframe,
-  onAction, // Callback to handle model actions from the parent
-}) {
-  // const { camera } = useThree();
-  const { camera, controls } = useThree();
-  const modelRef = useRef();
-  const [action, setAction] = useState(null);
+function CameraAdjuster({ model }) {
+  const { camera } = useThree();
 
-  const [originalMaterials, setOriginalMaterials] = useState([]);
-
-  // Fit model to screen logic
-  const fitModelToScreen = useCallback(() => {
-    if (!modelRef.current || !camera || !controls) {
-      console.error("Missing model, camera, or controls!");
-      return;
-    }
-  
-    const box = new THREE.Box3().setFromObject(modelRef.current);
-    const size = box.getSize(new THREE.Vector3());
-    const center = box.getCenter(new THREE.Vector3());
-  
-    console.log("Model bounding box size:", size);
-    console.log("Model bounding box center:", center);
-  
-    const maxDim = Math.max(size.x, size.y, size.z);
-    const fov = camera.fov * (Math.PI / 180);
-    const cameraZ = Math.abs(maxDim / (2 * Math.tan(fov / 2)));
-    const minZ = box.min.z;
-    const cameraToFarEdge = minZ < 0 ? -minZ + cameraZ : cameraZ;
-  
-    camera.position.set(center.x, center.y, cameraToFarEdge * 1.5);
-    console.log("Camera position:", camera.position);
-  
-    camera.lookAt(center);
-    if (controls) controls.target.set(center.x, center.y, center.z);
-  
-    invalidate(); // Force canvas re-render
-  }, [camera, controls]);
-  
-
-  // Handle model actions
-  const handleModelAction = (action = null) => {
-    if (!modelRef.current) {
-        console.error("Model reference is null or undefined!");
-        return;
-    }
-
-    const { current: model } = modelRef;
-    const rotationStep = Math.PI / 4;
-
-    if (!action) {
-        console.warn("No action provided!");
-        return;
-    }
-
-    console.log("Triggering action:", action);
-
-    switch (action) {
-        case "flipX":
-            model.scale.x *= -1;
-            break;
-        case "flipY":
-            model.scale.y *= -1;
-            break;
-        case "rotateX":
-            model.rotation.x += rotationStep;
-            break;
-        case "rotateY":
-            model.rotation.y += rotationStep;
-            break;
-        case "fitToScreen":
-            fitModelToScreen();
-            break;
-        default:
-            console.warn("Unknown action:", action);
-    }
-    invalidate(); // Force canvas re-render
-};
-
-
-  // Expose the action handler to the parent component
-  useEffect(() => {
-    if (onAction) {
-      console.log("Setting action handler in parent.");
-      onAction(handleModelAction);
-    }
-  }, [onAction, handleModelAction]);
-
-  // Store original material properties when the model is loaded
   useEffect(() => {
     if (model) {
-      const materials = [];
-      model.traverse((child) => {
-        if (child.isMesh) {
-          // Store the original material properties
-          materials.push({
-            mesh: child,
-            originalColor: child.material.color.getHex(),
-            originalOpacity: child.material.opacity,
-          });
-        }
-      });
-      setOriginalMaterials(materials);
-    }
-  }, [model]);
-
-  // Update the camera position based on the model's size and center
-  useEffect(() => {
-    if (model && modelRef.current) {
-      const box = new THREE.Box3().setFromObject(modelRef.current);
+      const box = new THREE.Box3().setFromObject(model);
       const size = box.getSize(new THREE.Vector3()).length();
       const center = box.getCenter(new THREE.Vector3());
       camera.position.set(center.x, center.y, size * 1.5);
       camera.lookAt(center);
     }
   }, [model, camera]);
-  useEffect(() => {
-    // Add double-click event listener to clear the selected part
-    const handleDoubleClick = () => {
-      setSelectedPart(null); // Deselect all parts
-      setSelectedSidebarPart(null); // Clear the sidebar selection
-    };
 
-    // Add the event listener to the canvas or viewer container
-    const viewerContainer = document.getElementById("model-viewer-container");
-    viewerContainer.addEventListener("dblclick", handleDoubleClick);
-
-    // Cleanup the event listener when the component unmounts
-    return () => {
-      viewerContainer.removeEventListener("dblclick", handleDoubleClick);
-    };
-  }, [setSelectedPart, setSelectedSidebarPart]);
-
-  // Apply highlighting or restore the original material properties
-  useEffect(() => {
-    if (model && originalMaterials.length > 0) {
-      model.traverse((child) => {
-        if (child.isMesh) {
-          const materialData = originalMaterials.find(
-            (data) => data.mesh === child
-          );
-
-          if (materialData) {
-            if (selectedPart && selectedPart === child) {
-              // Highlight the selected part
-              child.material.color.setHex(0x00aaff); // Highlight color
-              child.material.opacity = 0.6;
-              // child.material.transparent = true;
-            } else {
-              // Restore original material properties
-              child.material.color.setHex(materialData.originalColor);
-              child.material.opacity = 1;
-              // child.material.transparent = false;
-            }
-          }
-        }
-      });
-    }
-  }, [model, selectedPart, originalMaterials]);
-  useEffect(() => {
-    // Toggle wireframe
-    if (modelRef.current) {
-      modelRef.current.traverse((child) => {
-        if (child.material) {
-          child.material.wireframe = showWireframe;
-        }
-      });
-    }
-  }, [showWireframe]);
-
-  return model ? (
-    <group
-      ref={modelRef}
-      onClick={(event) => {
-        event.stopPropagation();
-        const clickedPart = event.object;
-        setSelectedPart(clickedPart); // Highlight the clicked part
-        setSelectedSidebarPart(clickedPart); // Sync with Sidebar
-      }}
-    >
-      <Center>
-        <primitive object={model} />
-      </Center>
-    </group>
-  ) : null;
+  return null; // This component does not render anything
 }
 
 export default function ModelViewer({
@@ -216,28 +36,20 @@ export default function ModelViewer({
   backgroundColor,
   environment,
   selectedHDRI,
-  selectedSidebarPart, // Add this prop for selected part from the sidebar
-  setSelectedSidebarPart, // Function to set the selected part in the sidebar
+  selectedSidebarPart,
+  setSelectedSidebarPart,
   autoRotate,
   autoRotateSpeed,
   showGrid,
-  setAction,
 }) {
   const [model, setModel] = useState(null);
   const [error, setError] = useState(null);
   const [isDragActive, setIsDragActive] = useState(false);
   const [parts, setParts] = useState([]);
-  const [isMeshesSectionOpen, setIsMeshesSectionOpen] = useState(false); // Track if "Meshes" section is open
-  const [selectedPart, setSelectedPart] = useState(null); // Track selected part
-  const [handleModelAction, setHandleModelAction] = useState(null);
-  const modelRef = useRef();
-
+  const [selectedPart, setSelectedPart] = useState(null);
+  const [originalMaterials, setOriginalMaterials] = useState([]);
   const gridHelperRef = useRef();
-
-  const triggerModelAction = (action) => {
-    console.log("Triggering action from parent:", action);
-    setAction(action); // Assuming this updates the `onAction` prop for the Model
-};
+  const modelRef = useRef();
 
   const loadModel = (file) => {
     setError(null);
@@ -266,37 +78,140 @@ export default function ModelViewer({
     loader
       .loadAsync(url)
       .then((loadedModel) => {
-        setModel(loadedModel.scene || loadedModel);
+        const scene = loadedModel.scene || loadedModel;
+        setModel(scene);
         URL.revokeObjectURL(url);
-        extractParts(loadedModel.scene || loadedModel); // Extract parts and sen to the sidebar
+        extractParts(scene);
+        storeOriginalMaterials(scene);
       })
       .catch(() => {
         setError("Failed to load model. Please try a different file.");
       });
   };
-  // const Loder = () => {
-  //   return (
-  //     <Html center>
-  //       <div style={{ color: "#fff" }}>Loading...</div>
-  //     </Html>
-  //   );
-  // };
 
   const extractParts = (model) => {
     const partsArray = [];
-
     model.traverse((child) => {
       if (child.isMesh) {
         partsArray.push({ name: child.name || "Unnamed Part", mesh: child });
       }
     });
     setParts(partsArray);
-    onModelLoad(partsArray); // Pass parts to layout then sidebar
+    onModelLoad(partsArray); // Pass parts to parent component
   };
-  const handleClickPart = (part) => {
-    console.log("Clicked part:", part); // Debugging line to confirm clicks
-    setSelectedPart(part); // Update selected part
+
+  const flipModel = () => {
+    if (model) {
+      model.scale.y *= -1; // Flip along y-axis
+    }
   };
+  const flipModel1 = () => {
+    if (model) {
+      model.scale.x *= -1; // Flip along X-axis
+    }
+  };
+  const rotateModel = (axis) => {
+    if (model) {
+      const rotationAmount = Math.PI / 2; // 90 degrees
+      model.rotation[axis] += rotationAmount;
+    }
+  };
+
+  const downloadModel = () => {
+    if (model) {
+      const exporter = new GLTFExporter();
+      exporter.parse(
+        model,
+        (gltf) => {
+          const blob = new Blob([JSON.stringify(gltf)], {
+            type: "application/json",
+          });
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = "model.gltf";
+          link.click();
+        },
+        { binary: false }
+      );
+    }
+  };
+
+  const takeScreenshot = () => {
+    const screenSnap = document.querySelector("model-viewer-container");
+    screenSnap.toBlob((blob) => {
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "screenshot.png";
+      link.click();
+    });
+  };
+
+  const storeOriginalMaterials = (model) => {
+    const materials = [];
+    model.traverse((child) => {
+      if (child.isMesh) {
+        materials.push({
+          mesh: child,
+          originalColor: child.material.color.getHex(),
+          originalOpacity: child.material.opacity,
+        });
+      }
+    });
+    setOriginalMaterials(materials);
+  };
+
+  const handleHighlighting = useCallback(() => {
+    if (model && originalMaterials.length > 0) {
+      model.traverse((child) => {
+        if (child.isMesh) {
+          const materialData = originalMaterials.find(
+            (data) => data.mesh === child
+          );
+          if (materialData) {
+            if (selectedPart && selectedPart === child) {
+              child.material.color.setHex(0x00aaff); // Highlight color
+              child.material.opacity = 0.6;
+            } else {
+              child.material.color.setHex(materialData.originalColor);
+              child.material.opacity = 1;
+            }
+          }
+        }
+      });
+    }
+  }, [model, originalMaterials, selectedPart]);
+
+  useEffect(() => {
+    handleHighlighting();
+  }, [selectedPart, handleHighlighting]);
+
+  useEffect(() => {
+    if (selectedSidebarPart) {
+      setSelectedPart(selectedSidebarPart);
+    }
+    if (gridHelperRef.current) {
+      gridHelperRef.current.visible = showGrid;
+    }
+
+    const handleDoubleClick = () => {
+      setSelectedPart(null);
+      setSelectedSidebarPart(null);
+    };
+
+    const viewerContainer = document.getElementById("model-viewer-container");
+
+    if (viewerContainer) {
+      viewerContainer.addEventListener("dblclick", handleDoubleClick);
+    }
+
+    return () => {
+      if (viewerContainer) {
+        viewerContainer.removeEventListener("dblclick", handleDoubleClick);
+      }
+    };
+  }, [selectedSidebarPart, showGrid, setSelectedPart, setSelectedSidebarPart]);
+
+
 
   const onDrop = useCallback((event) => {
     event.preventDefault();
@@ -305,114 +220,61 @@ export default function ModelViewer({
     if (file) loadModel(file);
   }, []);
 
-  const onFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) loadModel(file);
-  };
-
-  // Update selected part when part is clicked in Sidebar
-  useEffect(() => {
-    if (selectedSidebarPart) {
-      setSelectedPart(selectedSidebarPart);
-    }
-  }, [selectedSidebarPart]);
-
-  useEffect(() => {
-    // Toggle grid helper
-    if (gridHelperRef.current) {
-      gridHelperRef.current.visible = showGrid;
-    }
-  }, [showGrid]);
-
   return (
-    // <div className="">
     <div
       id="model-viewer-container"
-      className="model-viewer CustomBorder rounded  d-flex align-items-center justify-content-center position-relative"
+      className="model-viewer CustomBorder rounded d-flex align-items-center justify-content-center position-relative"
       style={{ width: "100%", height: "100%" }}
-      onDrop={(event) => {
-        event.preventDefault();
-        setIsDragActive(false);
-        const file = event.dataTransfer.files[0];
-        if (file) loadModel(file);
-      }}
+      onDrop={onDrop}
+      onDragOver={(event) => event.preventDefault()}
+      onDragEnter={() => setIsDragActive(true)}
+      onDragLeave={() => setIsDragActive(false)}
     >
       {model ? (
         <>
-          <div
-            className="top-0 position-absolute p-1 w-100 canvasNavBar d-flex gap-3"
-            style={{ height: "40px" }}
-          >
-            {/* <span onClick={() => triggerModelAction("flipX")}>
-              <i className="ri-arrow-left-right-line iconsCan"></i>
-            </span>
-            <span onClick={() => triggerModelAction("flipY")}>
-              <i className="ri-arrow-up-down-line iconsCan"></i>
-            </span>
-            <span onClick={() => triggerModelAction("rotateX")}>
-              <i className="ri-arrow-left-right-line iconsCan"></i>
-            </span>
-            <span onClick={() => triggerModelAction("rotateY")}>
-              <i className="ri-arrow-left-right-line iconsCan"></i>
-            </span>
-            <span onClick={() => triggerModelAction("fitToScreen")}>
-              <i className="ri-arrow-left-right-line iconsCan"></i>
-            </span> */}
-            <span onClick={() => triggerModelAction("flipX")}>Flip X</span>
-            <span onClick={() => triggerModelAction("flipY")}>Flip Y</span>
-            <span onClick={() => triggerModelAction("rotateX")}>Rotate X</span>
-            <span onClick={() => triggerModelAction("rotateY")}>Rotate Y</span>
-            <span onClick={() => triggerModelAction("fitToScreen")}>Fit</span>
-          </div>
-
+          <ControlsBar
+            onFlip1={flipModel1}
+            onFlip={flipModel}
+            onRotate={rotateModel}
+            onDownload={downloadModel}
+            onScreenshot={takeScreenshot}
+          />
           <Canvas
             camera={{ position: [0, 1, 5], fov: 50 }}
-            className=""
             style={{
               width: "100%",
-              top: "20px",
               height: "calc(100% - 40px)",
+              top: "20px",
               background: backgroundColor,
             }}
           >
-            {backgroundColor && (
-              <color attach="background" args={[backgroundColor]} />
-            )}
-
-            {selectedHDRI && (
-              <Environment
-                files={selectedHDRI}
-                background
-                // backgroundBlurriness={0.5}
-              />
-            )}
+            {selectedHDRI && <Environment files={selectedHDRI} background />}
             <ambientLight intensity={1.0} />
             <directionalLight position={[0, 20, 0]} intensity={1.0} />
-            <directionalLight position={[0, -20, 0]} intensity={1.0} />
-            <directionalLight position={[-20, 0, 0]} intensity={1.0} />
-            <directionalLight position={[20, 0, 0]} intensity={1.0} />
-            <directionalLight position={[0, 0, 20]} intensity={1.0} />
-            <directionalLight position={[0, 0, -20]} intensity={1.0} />
-            {/* <Suspense fallback={<Loder />}> */}
             <Suspense fallback={<div>Loading...</div>}>
-              <Model
-                model={model}
-                onClickPart={handleClickPart}
-                selectedPart={selectedPart} // Pass selected part
-                setSelectedPart={setSelectedPart} // Pass function to update selected part
-                setSelectedSidebarPart={setSelectedSidebarPart} // Sync selected part to sidebar
-                onAction={setHandleModelAction}
-              />
+              {backgroundColor && (
+                <color attach="background" args={[backgroundColor]} />
+              )}
+
+              <group
+                onClick={(event) => {
+                  event.stopPropagation();
+                  const clickedPart = event.object;
+                  setSelectedPart(clickedPart);
+                  setSelectedSidebarPart(clickedPart);
+                }}
+              >
+                <Center>
+                  <primitive object={model} />
+                </Center>
+              </group>
+              <CameraAdjuster model={model} />
             </Suspense>
             <OrbitControls
               autoRotate={autoRotate}
               autoRotateSpeed={autoRotateSpeed}
             />
             {environment && <Environment preset={environment} />}
-            {selectedHDRI && <Environment files={selectedHDRI} />}
-            {/* <axesHelper args={[5]} /> */}
-            {/* <Stats /> */}
-            {/* Grid Helper */}
             {showGrid && (
               <primitive
                 object={new THREE.GridHelper(10, 10)}
@@ -427,29 +289,10 @@ export default function ModelViewer({
           {isDragActive ? (
             <div className="fs-1">Release to view your file...</div>
           ) : (
-            <label>
-              <div className="fs-1"> Drag & Drop Files Here</div>
-              <div className="fs-3"> Or </div>
-              <div className="d-flex w-100 justify-content-center align-items-center">
-                <input
-                  type="file"
-                  id="file-upload"
-                  accept=".glb,.gltf,.obj,.fbx"
-                  onChange={onFileChange}
-                  style={{ display: "none" }}
-                />
-                <label
-                  htmlFor="file-upload"
-                  className="ThreeDButton ThreeDElem fs-2"
-                >
-                  Browse Model
-                </label>
-              </div>
-            </label>
+            <FileUploader onFileLoad={loadModel} />
           )}
         </div>
       )}
     </div>
-    // </div>
   );
 }
