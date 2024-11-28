@@ -17,6 +17,20 @@ export default function Layout() {
   const [autoRotate, setAutoRotate] = useState(false);
   const [autoRotateSpeed, setAutoRotateSpeed] = useState(2);
   const [showGrid, setShowGrid] = useState(false);
+  const [modelDetails, setModelDetails] = useState({
+    fileName: "",
+    fileSize: "",
+    vertices: 0,
+    triangles: 0,
+    sizeX: 0,
+    sizeY: 0,
+    sizeZ: 0,
+    volume: 0,
+    surfaceArea: 0,
+    materials: [],
+    generator: "",
+    version: "",
+  });
 
   // Handle selecting a part from the sidebar
   const handleSelectPart = (part) => {
@@ -63,6 +77,7 @@ export default function Layout() {
             setAutoRotateSpeed={setAutoRotateSpeed}
             showGrid={showGrid}
             setShowGrid={setShowGrid}
+            modelDetails={modelDetails} //to show the details like vertices etc.
           />
         )}
         <Loader />
@@ -78,6 +93,7 @@ export default function Layout() {
           autoRotate={autoRotate}
           autoRotateSpeed={autoRotateSpeed}
           showGrid={showGrid}
+          setModelDetails={setModelDetails} //to get the details like vertices etc.
         />
       </div>
       <footer

@@ -49,6 +49,8 @@ const Sidebar = ({
   setAutoRotateSpeed,
   showGrid,
   setShowGrid,
+
+  modelDetails, //to get the details like vertices etc.
 }) => {
   const [isMeshesOpen, setIsMeshesOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -279,7 +281,45 @@ const Sidebar = ({
       </div>
       {isDetailsOpen && (
         <div>
-          <div className="py-1">Working...</div>
+          <div className="py-1">
+            <ul className="list-unstyled">
+              <li>
+                <strong>File Name:</strong> {modelDetails.fileName || "N/A"}
+              </li>
+              <li>
+                <strong>File Size:</strong> {modelDetails.fileSize || "N/A"}
+              </li>
+              <li>
+                <strong>Vertices:</strong> {modelDetails.vertices}
+              </li>
+              <li>
+                <strong>Triangles:</strong> {modelDetails.triangles}
+              </li>
+              <li>
+                <strong>Size:</strong>
+                X: {modelDetails.sizeX}m, Y: {modelDetails.sizeY}m, Z:{" "}
+                {modelDetails.sizeZ}m
+              </li>
+              <li>
+                <strong>Volume:</strong> {modelDetails.volume}m³
+              </li>
+              <li>
+                <strong>Surface Area:</strong> {modelDetails.surfaceArea}m²
+              </li>
+              <li>
+                <strong>Materials:</strong>{" "}
+                {modelDetails.materials.length > 0
+                  ? modelDetails.materials.join(", ")
+                  : "None"}
+              </li>
+              <li>
+                <strong>Generator:</strong> {modelDetails.generator}
+              </li>
+              <li>
+                <strong>Version:</strong> {modelDetails.version}
+              </li>
+            </ul>
+          </div>
         </div>
       )}
     </div>

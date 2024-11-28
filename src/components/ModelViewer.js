@@ -14,6 +14,8 @@ import * as THREE from "three";
 import FileUploader from "./FileUploader";
 import ControlsBar from "./ControlsBar";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
+import calculateVolume from "../utils/calculateVolume.js";
+import calculateSurfaceArea from "../utils/calculateSurfaceArea.js";
 
 function CameraAdjuster({ model }) {
   const { camera } = useThree();
@@ -41,6 +43,7 @@ export default function ModelViewer({
   autoRotate,
   autoRotateSpeed,
   showGrid,
+  setModelDetails, // Add this prop to update model details
 }) {
   const [model, setModel] = useState(null);
   const [error, setError] = useState(null);
@@ -83,6 +86,7 @@ export default function ModelViewer({
         URL.revokeObjectURL(url);
         extractParts(scene);
         storeOriginalMaterials(scene);
+        calculateModelDetails(scene, loadedModel, file); // Add this to calculate model details
       })
       .catch(() => {
         setError("Failed to load model. Please try a different file.");
@@ -183,9 +187,6 @@ export default function ModelViewer({
 
   useEffect(() => {
     handleHighlighting();
-  }, [selectedPart, handleHighlighting]);
-
-  useEffect(() => {
     if (selectedSidebarPart) {
       setSelectedPart(selectedSidebarPart);
     }
@@ -209,9 +210,76 @@ export default function ModelViewer({
         viewerContainer.removeEventListener("dblclick", handleDoubleClick);
       }
     };
-  }, [selectedSidebarPart, showGrid, setSelectedPart, setSelectedSidebarPart]);
+  }, [
+    selectedSidebarPart,
+    showGrid,
+    setSelectedPart,
+    setSelectedSidebarPart,
+    selectedPart,
+    handleHighlighting,
+  ]);
 
+  const calculateModelDetails = (scene, loadedModel, file) => {
+    let vertices = 0;
+    let triangles = 0;
+    let volume = 0;
+    let surfaceArea = 0;
+    const materials = new Set();
+    const boundingBox = new THREE.Box3().setFromObject(scene);
+    const size = boundingBox.getSize(new THREE.Vector3());
+    var assetGenerator = "Unknown";
+    var assetVersion = "Unknown";
+    scene.traverse((child) => {
+      if (child.isMesh && child.geometry) {
+        const geometry = child.geometry;
 
+        // Count vertices and triangles
+        vertices += geometry.attributes.position.count;
+        if (geometry.index !== null) {
+          triangles += geometry.index.count / 3;
+        } else {
+          triangles += geometry.attributes.position.count / 3;
+        }
+
+        // Collect materials
+        if (child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach((mat) => materials.add(mat.name));
+          } else {
+            materials.add(child.material.name);
+          }
+        }
+
+        // Calculate volume and surface area
+        volume += calculateVolume(geometry);
+        surfaceArea += calculateSurfaceArea(geometry);
+
+        // Extract asset properties if available
+        
+        if (loadedModel.parser && loadedModel.parser.json) {
+          const asset = loadedModel.parser.json.asset || {};
+          assetGenerator = asset.generator || "Unknown";
+          assetVersion = asset.version || "Unknown";
+        }
+      }
+    });
+
+    // Update model details via parent state
+    setModelDetails({
+      fileName: file.name,
+      fileSize: (file.size / 1024 / 1024).toFixed(2) + " MB", // Convert bytes to MB
+      vertices,
+      triangles,
+      sizeX: size.x.toFixed(2),
+      sizeY: size.y.toFixed(2),
+      sizeZ: size.z.toFixed(2),
+      volume: volume.toFixed(2),
+      surfaceArea: surfaceArea.toFixed(2),
+      materials: Array.from(materials),
+      generator: assetGenerator,
+      version: assetVersion,
+    });
+  };
 
   const onDrop = useCallback((event) => {
     event.preventDefault();
