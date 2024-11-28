@@ -255,7 +255,7 @@ export default function ModelViewer({
         surfaceArea += calculateSurfaceArea(geometry);
 
         // Extract asset properties if available
-        
+
         if (loadedModel.parser && loadedModel.parser.json) {
           const asset = loadedModel.parser.json.asset || {};
           assetGenerator = asset.generator || "Unknown";

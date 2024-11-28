@@ -7,6 +7,7 @@ import depot from "./assets/image/old_depot-min.jpg";
 import rogland from "./assets/image/rogland_moonlit_night-min.jpg";
 import ScreenshotControls from "./ScreenshotControls";
 import { hover } from "@testing-library/user-event/dist/hover";
+import { div } from "three/webgpu";
 const hdriOptions = [
   {
     name: "Outdoor",
@@ -280,46 +281,65 @@ const Sidebar = ({
         <span>Details</span>
       </div>
       {isDetailsOpen && (
-        <div>
-          <div className="py-1">
-            <ul className="list-unstyled">
-              <li>
-                <strong>File Name:</strong> {modelDetails.fileName || "N/A"}
-              </li>
-              <li>
-                <strong>File Size:</strong> {modelDetails.fileSize || "N/A"}
-              </li>
-              <li>
-                <strong>Vertices:</strong> {modelDetails.vertices}
-              </li>
-              <li>
-                <strong>Triangles:</strong> {modelDetails.triangles}
-              </li>
-              <li>
-                <strong>Size:</strong>
-                X: {modelDetails.sizeX}m, Y: {modelDetails.sizeY}m, Z:{" "}
-                {modelDetails.sizeZ}m
-              </li>
-              <li>
-                <strong>Volume:</strong> {modelDetails.volume}m³
-              </li>
-              <li>
-                <strong>Surface Area:</strong> {modelDetails.surfaceArea}m²
-              </li>
-              <li>
-                <strong>Materials:</strong>{" "}
-                {modelDetails.materials.length > 0
-                  ? modelDetails.materials.join(", ")
-                  : "None"}
-              </li>
-              <li>
-                <strong>Generator:</strong> {modelDetails.generator}
-              </li>
-              <li>
-                <strong>Version:</strong> {modelDetails.version}
-              </li>
-            </ul>
-          </div>
+        <div
+          className="p-1 overflow-y-scroll overflow-x-hidden sidebarScroller "
+          style={{ height: "calc(100vh -100px)", maxHeight: "455px" }}
+        >
+          <ul className="list-unstyled">
+            <li>
+              <strong>File Name:</strong> {modelDetails.fileName || "N/A"}
+            </li>
+            <li>
+              <strong>File Size:</strong> {modelDetails.fileSize || "N/A"}
+            </li>
+            <li>
+              <strong>Vertices:</strong> {modelDetails.vertices}
+            </li>
+            <li>
+              <strong>Triangles:</strong> {modelDetails.triangles}
+            </li>
+            <li>
+              <div className="row">
+                <div className="col-6">
+                  <strong>Size:</strong>
+                </div>
+                <div className="col-6">X: {modelDetails.sizeX}m,</div>
+                <div className="col-6">Y: {modelDetails.sizeY}m,</div>
+                <div className="col-6">Z: {modelDetails.sizeZ}m</div>
+              </div>
+            </li>
+
+            <li>
+              <strong>Volume:</strong> {modelDetails.volume}m³
+            </li>
+            <li>
+              <strong>Surface Area:</strong> {modelDetails.surfaceArea}m²
+            </li>
+            <li>
+              <strong>Materials:</strong>
+              <br />
+              {modelDetails.materials.length > 0 ? (
+                <div className="row m-1">
+                  {modelDetails.materials.map((material, index) => (
+                    <div key={index} className="col-6  p-0 m-0 border">
+                      <div className="">
+                        {material?.trim() ? material : "No Name"}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                "None"
+              )}
+            </li>
+
+            <li>
+              <strong>Generator:</strong> {modelDetails.generator}
+            </li>
+            <li>
+              <strong>Version:</strong> {modelDetails.version}
+            </li>
+          </ul>
         </div>
       )}
     </div>
