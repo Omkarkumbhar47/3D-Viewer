@@ -16,6 +16,7 @@ import ControlsBar from "./ControlsBar";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
 import calculateVolume from "../utils/calculateVolume.js";
 import calculateSurfaceArea from "../utils/calculateSurfaceArea.js";
+import { Box3, Vector3 } from "three";
 
 function CameraAdjuster({ model }) {
   const { camera } = useThree();
@@ -103,21 +104,33 @@ export default function ModelViewer({
     setParts(partsArray);
     onModelLoad(partsArray); // Pass parts to parent component
   };
+  const centerModel = (model) => {
+    const box = new Box3().setFromObject(model);
+    const center = new Vector3();
+    box.getCenter(center);
+
+    model.position.sub(center); // Reposition the model to center it
+  };
 
   const flipModel = () => {
     if (model) {
-      model.scale.y *= -1; // Flip along y-axis
+      model.scale.y *= -1;
+      centerModel(model); // Center the model after rotation
     }
   };
+
   const flipModel1 = () => {
     if (model) {
-      model.scale.x *= -1; // Flip along X-axis
+      model.scale.x *= -1;
+      centerModel(model);
     }
   };
+
   const rotateModel = (axis) => {
     if (model) {
       const rotationAmount = Math.PI / 2; // 90 degrees
       model.rotation[axis] += rotationAmount;
+      centerModel(model);
     }
   };
 
