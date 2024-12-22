@@ -66,7 +66,6 @@ export default function ModelViewer({
   ];
 
   const loadModel = (file) => {
-    console.log(file);
     setError(null); // Clear previous errors
 
     let fileExtension;
@@ -76,13 +75,12 @@ export default function ModelViewer({
       // For uploaded files
       fileExtension = file.name.split(".").pop().toLowerCase(); // Extract file extension from File
       url = URL.createObjectURL(file); // Create a URL for the file
-      console.log("Loading user-uploaded file:", file.name);
+
       // Add logic to load the model using the `url`
     } else if (typeof file === "string") {
       // For demo models
       fileExtension = file.split(".").pop().toLowerCase(); // Extract file extension from string path
       url = file; // Use the string as the URL
-      console.log("Loading demo model from URL:", url);
       // Add logic to load the model directly using `url`
     } else {
       console.error("Invalid file type:", file);
