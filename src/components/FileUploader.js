@@ -7,11 +7,11 @@ const FileUploader = ({ onFileLoad }) => {
   };
 
   return (
-    <div className="d-flex text-center">
+    <div className="">
       <label>
         <div className="fs-1"> Drag & Drop Files Here</div>
         <div className="fs-3"> Or </div>
-        <div className="d-flex w-100 justify-content-center align-items-center">
+        <div className="d-flex  justify-content-center align-items-center">
           <input
             type="file"
             id="file-upload"

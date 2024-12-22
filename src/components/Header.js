@@ -15,7 +15,19 @@ function Header() {
     return () => clearInterval(timer); // Cleanup timer on component unmount
   }, []);
 
-  const currentDate = currentTime.toLocaleDateString();
+
+  const date = new Date();
+  const longDate = date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    // timeZoneName: "short",
+    // timeZoneOffset: "UTC"
+  }).replace("at" ,"|");
   const currentTimeString = currentTime.toLocaleTimeString();
 
   const toggleFullScreen = () => {
@@ -52,13 +64,13 @@ function Header() {
   };
 
   return (
-    <div className="d-flex justify-content-between align-items-center ">  
+    <div className="d-flex justify-content-between align-items-center ">
       <Link to="/" className="fs-3 ">
         <div className="ThreeDElem">3D Viewer</div>
       </Link>
 
       <div className="date-time d-none d-md-block">
-        <span>{currentDate}</span> | <span>{currentTimeString}</span>
+        <span>{longDate}</span> 
       </div>
 
       {/* <div className="navigation">
@@ -74,16 +86,21 @@ function Header() {
       </div> */}
       <div className="controls d-none d-md-block">
         {fullScreenOn ? (
-          <button className=" ThreeDButton ThreeDElem" onClick={toggleFullScreen}>
+          <button
+            className=" ThreeDButton ThreeDElem"
+            onClick={toggleFullScreen}
+          >
             <i className="ri-fullscreen-exit-line ViewerIcon"> </i>
             <div className="ms-2">Minimize</div>
           </button>
         ) : (
-          <button className=" ThreeDButton ThreeDElem" onClick={toggleFullScreen}>
+          <button
+            className=" ThreeDButton ThreeDElem"
+            onClick={toggleFullScreen}
+          >
             <i className="ri-fullscreen-line ViewerIcon"> </i>
             <div className="ms-2">Fullscreen</div>
           </button>
-         
         )}
       </div>
     </div>

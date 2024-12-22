@@ -55,10 +55,40 @@ export default function ModelViewer({
   const gridHelperRef = useRef();
   const modelRef = useRef();
 
+  // Demo models
+  const demoModels = [
+    { name: "Merc car.glb", demoFile: "/Merc car.glb" },
+    { name: "Iphone 13.glb", demoFile: "/Iphone 13.glb" },
+    { name: "Cabin.glb", demoFile: "/Cabin.glb" },
+    { name: "Poly Tree.glb", demoFile: "/Poly Tree Scence.glb" },
+    { name: "House2.glb", demoFile: "/house2.glb" },
+    { name: "Zuk 3d Model.glb", demoFile: "/Zuk 3d Model.glb" },
+  ];
+
   const loadModel = (file) => {
-    setError(null);
-    const fileExtension = file.name.split(".").pop().toLowerCase();
-    const url = URL.createObjectURL(file);
+    console.log(file);
+    setError(null); // Clear previous errors
+
+    let fileExtension;
+    let url;
+
+    if (file instanceof File) {
+      // For uploaded files
+      fileExtension = file.name.split(".").pop().toLowerCase(); // Extract file extension from File
+      url = URL.createObjectURL(file); // Create a URL for the file
+      console.log("Loading user-uploaded file:", file.name);
+      // Add logic to load the model using the `url`
+    } else if (typeof file === "string") {
+      // For demo models
+      fileExtension = file.split(".").pop().toLowerCase(); // Extract file extension from string path
+      url = file; // Use the string as the URL
+      console.log("Loading demo model from URL:", url);
+      // Add logic to load the model directly using `url`
+    } else {
+      console.error("Invalid file type:", file);
+      setError("Invalid file type.");
+      return;
+    }
 
     let loader;
     switch (fileExtension) {
@@ -366,13 +396,28 @@ export default function ModelViewer({
           </Canvas>
         </>
       ) : (
-        <div className="d-flex text-center">
-          {isDragActive ? (
-            <div className="fs-1">Release to view your file...</div>
-          ) : (
-            <FileUploader onFileLoad={loadModel} />
-          )}
-        </div>
+        <>
+          <div className="text-center ">
+            {isDragActive ? (
+              <div className="fs-1">Release to view your file...</div>
+            ) : (
+              <div className="w-100 text-center  m-auto">
+                <FileUploader onFileLoad={loadModel} />
+                <div className="flex-wrap pt-4 w-75 m-auto">
+                  {demoModels.map((dem) => (
+                    <button
+                      key={dem.name}
+                      className="btn btn-outline-info mx-2 my-1 w-25 fw-bold"
+                      onClick={() => loadModel(dem.demoFile)}
+                    >
+                      {dem.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );

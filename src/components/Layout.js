@@ -95,6 +95,8 @@ export default function Layout() {
           showGrid={showGrid}
           setModelDetails={setModelDetails} //to get the details like vertices etc.
         />
+
+        
       </div>
       <footer
         className="d-flex justify-content-center align-items-center px-sm-5"
