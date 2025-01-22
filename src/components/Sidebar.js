@@ -4,6 +4,12 @@ import church from "./assets/image/laufenurg_church-min.jpg";
 import studio1 from "./assets/image/studio_small_08-min.jpg";
 import studio2 from "./assets/image/photo_studio_01-min.jpg";
 import depot from "./assets/image/old_depot-min.jpg";
+
+import Terrain from "./assets/image/hilly_terrain_01.jpg";
+import Lakes from "./assets/image/lakes.jpg";
+import Limehouse from "./assets/image/limehouse.jpg";
+import Harbor from "./assets/image/small_harbor_01.jpg";
+import Sunflowers from "./assets/image/sunflowers.jpg";
 import rogland from "./assets/image/rogland_moonlit_night-min.jpg";
 import ScreenshotControls from "./ScreenshotControls";
 import { hover } from "@testing-library/user-event/dist/hover";
@@ -34,6 +40,36 @@ const hdriOptions = [
     thumbnail: church,
     url: "/environment/laufenurg_church_4k.hdr",
   },
+  // {
+  //   name: "Clarens Night",
+  //   thumbnail: Clarens,
+  //   url: "/environment/clarens_night_01_4k.hdr",
+  // },
+  {
+    name: "Hilly Terrain",
+    thumbnail: Terrain,
+    url: "/environment/hilly_terrain_01_4k.hdr",
+  },
+  {
+    name: "Terrain",
+    thumbnail: Lakes,
+    url: "/environment/lakes_4k.hdr",
+  },
+  {
+    name: "Limehouse",
+    thumbnail: Limehouse,
+    url: "/environment/limehouse_4k.hdr",
+  },
+  {
+    name: "Small Harbor",
+    thumbnail: Harbor,
+    url: "/environment/small_harbor_01_4k.hdr",
+  },
+  // {
+  //   name: "Sunflowers",
+  //   thumbnail: Sunflowers,
+  //   url: "/environment/sunflowers_4k.hdr",
+  // },
 ];
 
 const Sidebar = ({
