@@ -9,11 +9,8 @@ import Terrain from "./assets/image/hilly_terrain_01.jpg";
 import Lakes from "./assets/image/lakes.jpg";
 import Limehouse from "./assets/image/limehouse.jpg";
 import Harbor from "./assets/image/small_harbor_01.jpg";
-import Sunflowers from "./assets/image/sunflowers.jpg";
 import rogland from "./assets/image/rogland_moonlit_night-min.jpg";
-import ScreenshotControls from "./ScreenshotControls";
-import { hover } from "@testing-library/user-event/dist/hover";
-import { div } from "three/webgpu";
+
 const hdriOptions = [
   {
     name: "Outdoor",
@@ -40,11 +37,6 @@ const hdriOptions = [
     thumbnail: church,
     url: "/environment/laufenurg_church_4k.hdr",
   },
-  // {
-  //   name: "Clarens Night",
-  //   thumbnail: Clarens,
-  //   url: "/environment/clarens_night_01_4k.hdr",
-  // },
   {
     name: "Hilly Terrain",
     thumbnail: Terrain,
@@ -65,11 +57,7 @@ const hdriOptions = [
     thumbnail: Harbor,
     url: "/environment/small_harbor_01_4k.hdr",
   },
-  // {
-  //   name: "Sunflowers",
-  //   thumbnail: Sunflowers,
-  //   url: "/environment/sunflowers_4k.hdr",
-  // },
+
 ];
 
 const Sidebar = ({
@@ -142,7 +130,7 @@ const Sidebar = ({
 
   return (
     <div
-      className="overflow-hidden px-1 pt-1 "
+      className="overflow-hidden px-1 pt-1 d-none d-md-inline"
       style={{ height: "calc(100vh - 109px)", minWidth: "250px" }}
     >
       <div

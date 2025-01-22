@@ -69,7 +69,7 @@ function Header() {
         <div className="ThreeDElem">3D Viewer</div>
       </Link>
 
-      <div className="date-time d-none d-md-block">
+      <div className="date-time d-none d-sm-block">
         <span>{longDate}</span> 
       </div>
 

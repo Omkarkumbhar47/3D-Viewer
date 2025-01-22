@@ -2,8 +2,8 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <div className="d-flex justify-content-around gap-2 gap-md-5">
-      <div className="ThreeDElem">
+    <div className="d-flex gap-1 gap-sm-5">
+      <div className="ThreeDElem ">
         <a
           href="https://github.com/Omkarkumbhar47/3D-Viewer"
           target="_blank"
@@ -13,7 +13,7 @@ const Footer = () => {
           <i className="ri-github-fill"></i> Github
         </a>
       </div>
-      <div className="ThreeDElem">
+      <div className="ThreeDElem d-none d-sm-inline">
         <a
           href="https://threejs.org/"
           target="_blank"
@@ -23,7 +23,7 @@ const Footer = () => {
           <i className="ri-triangle-line"></i> Three JS
         </a>
       </div>
-      <div className="ThreeDElem">
+      <div className="ThreeDElem d-none d-sm-inline">
         <a
           href="https://docs.pmnd.rs/react-three-fiber/"
           target="_blank"
@@ -33,7 +33,7 @@ const Footer = () => {
           <i className="ri-reactjs-line"></i> React Three Fiber
         </a>
       </div>
-      <div className="ThreeDElem">
+      <div className="ThreeDElem d-none d-sm-inline">
         <a
           href="https://drei.pmnd.rs/"
           target="_blank"

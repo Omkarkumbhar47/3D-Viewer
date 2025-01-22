@@ -8,7 +8,7 @@ export default function ControlsBar({
   onScreenshot,
 }) {
   return (
-    <div className="controls-bar d-flex justify-content-between  text-white top-0 position-absolute">
+    <div className="controls-bar z-2 d-flex justify-content-between  text-white top-0 position-absolute ">
       <button className="btn btn-primary p-1 m-1 mt-1 mt-1" onClick={onFlip}>
         Flip Model Y{/* <i className="ri-arrow-up-down-line iconsCan"></i> */}
       </button>

@@ -61,7 +61,7 @@ export default function Layout() {
       <div className="d-flex flex-grow-1 ">
         {isSidebarOpen && (
           <Sidebar
-            className="d-md-block d-noen"
+            className=""
             modelParts={modelParts}
             toggleVisibility={handleToggleVisibility}
             setBackgroundColor={setBackgroundColor}
@@ -95,11 +95,9 @@ export default function Layout() {
           showGrid={showGrid}
           setModelDetails={setModelDetails} //to get the details like vertices etc.
         />
-
-        
       </div>
       <footer
-        className="d-flex justify-content-center align-items-center px-sm-5"
+        className="d-flex justify-content-center align-items-center px-md-5 px-md-2"
         style={{ height: "50px" }}
       >
         <Footer />

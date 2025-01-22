@@ -7,7 +7,7 @@ const FileUploader = ({ onFileLoad }) => {
   };
 
   return (
-    <div className="">
+    <div className="" style={{ width: "100%", height: "100%" }}>
       <label>
         <div className="fs-1"> Drag & Drop Files Here</div>
         <div className="fs-3"> Or </div>
