@@ -333,7 +333,7 @@ export default function ModelViewer({
     <div
       id="model-viewer-container"
       className="model-viewer CustomBorder rounded d-flex align-items-center justify-content-center position-relative "
-      style={{ width: "95%"  }}
+      style={{ width: "100%"  }}
       onDrop={onDrop}
       onDragOver={(event) => event.preventDefault()}
       onDragEnter={() => setIsDragActive(true)}
