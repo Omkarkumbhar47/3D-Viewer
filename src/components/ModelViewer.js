@@ -333,7 +333,7 @@ export default function ModelViewer({
     <div
       id="model-viewer-container"
       className="model-viewer CustomBorder rounded d-flex align-items-center justify-content-center position-relative "
-      style={{ width: "100%"  }}
+      style={{ width: "100%", height: "100%" }}
       onDrop={onDrop}
       onDragOver={(event) => event.preventDefault()}
       onDragEnter={() => setIsDragActive(true)}
@@ -399,17 +399,26 @@ export default function ModelViewer({
             {isDragActive ? (
               <div className="fs-1">Release to view your file...</div>
             ) : (
-              <div className="w-100 text-center  m-auto">
-                <FileUploader onFileLoad={loadModel} />
-                <div className="flex-wrap pt-4 w-75 m-auto">
+              <div className="container text-center my-4">
+                {/* File Uploader */}
+                <div className="w-100 mx-auto">
+                  <FileUploader onFileLoad={loadModel} />
+                </div>
+
+                {/* Demo Models Section */}
+                <div className="row justify-content-center pt-4">
                   {demoModels.map((dem) => (
-                    <button
+                    <div
                       key={dem.name}
-                      className="btn btn-outline-info mx-2 my-1 w-25 fw-bold"
-                      onClick={() => loadModel(dem.demoFile)}
+                      className="col-6 col-sm-6 col-md-3 col-lg-3 d-flex justify-content-center mb-3"
                     >
-                      {dem.name}
-                    </button>
+                      <button
+                        className="btn btn-outline-info w-100 fw-bold"
+                        onClick={() => loadModel(dem.demoFile)}
+                      >
+                        {dem.name}
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>

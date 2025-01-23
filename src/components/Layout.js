@@ -58,44 +58,50 @@ export default function Layout() {
       <header className="text-center py-2 px-4">
         <Header />
       </header>
-      <div className="d-flex flex-grow-1 ">
+      <div className="d-flex flex-grow-1">
         {isSidebarOpen && (
-          <Sidebar
-            className=""
-            modelParts={modelParts}
-            toggleVisibility={handleToggleVisibility}
-            setBackgroundColor={setBackgroundColor}
-            setEnvironment={setEnvironment}
-            setSelectedHDRI={setSelectedHDRI}
-            onSelectPart={handleSelectPart}
+          <div className="d-none d-md-block sidebar">
+            <Sidebar
+              modelParts={modelParts}
+              toggleVisibility={handleToggleVisibility}
+              setBackgroundColor={setBackgroundColor}
+              setEnvironment={setEnvironment}
+              setSelectedHDRI={setSelectedHDRI}
+              onSelectPart={handleSelectPart}
+              selectedPart={selectedPart}
+              setSelectedSidebarPart={setSelectedSidebarPart}
+              selectedSidebarPart={selectedSidebarPart}
+              autoRotate={autoRotate}
+              setAutoRotate={setAutoRotate}
+              autoRotateSpeed={autoRotateSpeed}
+              setAutoRotateSpeed={setAutoRotateSpeed}
+              showGrid={showGrid}
+              setShowGrid={setShowGrid}
+              modelDetails={modelDetails}
+            />
+          </div>
+        )}
+
+        {/* Loader and Model Viewer */}
+        <div className="flex-grow-1 position-relative">
+          <Loader />
+          <ModelViewer
+            onModelLoad={handleModelLoad}
+            backgroundColor={backgroundColor}
+            environment={environment}
+            selectedHDRI={selectedHDRI}
             selectedPart={selectedPart}
+            onSelectPart={handleSelectPart}
             setSelectedSidebarPart={setSelectedSidebarPart}
             selectedSidebarPart={selectedSidebarPart}
             autoRotate={autoRotate}
-            setAutoRotate={setAutoRotate}
             autoRotateSpeed={autoRotateSpeed}
-            setAutoRotateSpeed={setAutoRotateSpeed}
             showGrid={showGrid}
-            setShowGrid={setShowGrid}
-            modelDetails={modelDetails} //to show the details like vertices etc.
+            setModelDetails={setModelDetails}
           />
-        )}
-        <Loader />
-        <ModelViewer
-          onModelLoad={handleModelLoad}
-          backgroundColor={backgroundColor}
-          environment={environment}
-          selectedHDRI={selectedHDRI}
-          selectedPart={selectedPart}
-          onSelectPart={handleSelectPart}
-          setSelectedSidebarPart={setSelectedSidebarPart} // Pass this down
-          selectedSidebarPart={selectedSidebarPart} // Track selected part
-          autoRotate={autoRotate}
-          autoRotateSpeed={autoRotateSpeed}
-          showGrid={showGrid}
-          setModelDetails={setModelDetails} //to get the details like vertices etc.
-        />
+        </div>
       </div>
+
       <footer
         className="d-flex justify-content-center align-items-center px-md-5 px-md-2"
         style={{ height: "50px" }}
