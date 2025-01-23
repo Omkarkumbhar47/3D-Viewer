@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 function Header() {
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const [fullScreenOn, setFullScreenOn] = useState(false);
+  // const [fullScreenOn, setFullScreenOn] = useState(false);
 
   // Update the time every second
   useEffect(() => {
@@ -30,38 +30,38 @@ function Header() {
   }).replace("at" ,"|");
   const currentTimeString = currentTime.toLocaleTimeString();
 
-  const toggleFullScreen = () => {
-    setFullScreenOn(fullScreenOn);
-    if (
-      document.fullscreenElement ||
-      document.webkitFullscreenElement ||
-      document.mozFullScreenElement ||
-      document.msFullscreenElement
-    ) {
-      // Exit fullscreen mode
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      }
-    } else {
-      // Enter fullscreen mode
-      const element = document.documentElement;
-      if (element.requestFullscreen) {
-        element.requestFullscreen();
-      } else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen();
-      } else if (element.mozRequestFullScreen) {
-        element.mozRequestFullScreen();
-      } else if (element.msRequestFullscreen) {
-        element.msRequestFullscreen();
-      }
-    }
-  };
+  // const toggleFullScreen = () => {
+  //   setFullScreenOn(fullScreenOn);
+  //   if (
+  //     document.fullscreenElement ||
+  //     document.webkitFullscreenElement ||
+  //     document.mozFullScreenElement ||
+  //     document.msFullscreenElement
+  //   ) {
+  //     // Exit fullscreen mode
+  //     if (document.exitFullscreen) {
+  //       document.exitFullscreen();
+  //     } else if (document.webkitExitFullscreen) {
+  //       document.webkitExitFullscreen();
+  //     } else if (document.mozCancelFullScreen) {
+  //       document.mozCancelFullScreen();
+  //     } else if (document.msExitFullscreen) {
+  //       document.msExitFullscreen();
+  //     }
+  //   } else {
+  //     // Enter fullscreen mode
+  //     const element = document.documentElement;
+  //     if (element.requestFullscreen) {
+  //       element.requestFullscreen();
+  //     } else if (element.webkitRequestFullscreen) {
+  //       element.webkitRequestFullscreen();
+  //     } else if (element.mozRequestFullScreen) {
+  //       element.mozRequestFullScreen();
+  //     } else if (element.msRequestFullscreen) {
+  //       element.msRequestFullscreen();
+  //     }
+  //   }
+  // };
 
   return (
     <div className="d-flex justify-content-between align-items-center w-100">
@@ -101,7 +101,7 @@ function Header() {
     </div> */}
 
     {/* Fullscreen Controls */}
-    <div className="controls d-none d-sm-block">
+    {/* <div className="controls d-none d-sm-block">
       {fullScreenOn ? (
         <button
           className="ThreeDButton ThreeDElem"
@@ -121,7 +121,7 @@ function Header() {
           <div className="ms-2">Fullscreen</div>
         </button>
       )}
-    </div>
+    </div> */}
   </div>
   );
 }
