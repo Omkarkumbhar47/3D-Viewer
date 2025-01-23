@@ -54,60 +54,129 @@ export default function Layout() {
   };
 
   return (
-    <div className="d-flex flex-column vh-100">
-      <header className="text-center py-2 px-4">
-        <Header />
-      </header>
-      <div className="d-flex flex-grow-1">
-        {isSidebarOpen && (
-          <div className="d-none d-md-block sidebar">
-            <Sidebar
-              modelParts={modelParts}
-              toggleVisibility={handleToggleVisibility}
-              setBackgroundColor={setBackgroundColor}
-              setEnvironment={setEnvironment}
-              setSelectedHDRI={setSelectedHDRI}
-              onSelectPart={handleSelectPart}
-              selectedPart={selectedPart}
-              setSelectedSidebarPart={setSelectedSidebarPart}
-              selectedSidebarPart={selectedSidebarPart}
-              autoRotate={autoRotate}
-              setAutoRotate={setAutoRotate}
-              autoRotateSpeed={autoRotateSpeed}
-              setAutoRotateSpeed={setAutoRotateSpeed}
-              showGrid={showGrid}
-              setShowGrid={setShowGrid}
-              modelDetails={modelDetails}
-            />
-          </div>
-        )}
+    // <div className="d-flex flex-column vh-100">
+    //   <header className="text-center py-2 px-4">
+    //     <Header />
+    //   </header>
+    //   <div className="d-flex flex-grow-1">
+    //     {isSidebarOpen && (
+    //       <div className="d-none d-md-block sidebar">
+    //         <Sidebar
+    //           modelParts={modelParts}
+    //           toggleVisibility={handleToggleVisibility}
+    //           setBackgroundColor={setBackgroundColor}
+    //           setEnvironment={setEnvironment}
+    //           setSelectedHDRI={setSelectedHDRI}
+    //           onSelectPart={handleSelectPart}
+    //           selectedPart={selectedPart}
+    //           setSelectedSidebarPart={setSelectedSidebarPart}
+    //           selectedSidebarPart={selectedSidebarPart}
+    //           autoRotate={autoRotate}
+    //           setAutoRotate={setAutoRotate}
+    //           autoRotateSpeed={autoRotateSpeed}
+    //           setAutoRotateSpeed={setAutoRotateSpeed}
+    //           showGrid={showGrid}
+    //           setShowGrid={setShowGrid}
+    //           modelDetails={modelDetails}
+    //         />
+    //       </div>
+    //     )}
 
-        {/* Loader and Model Viewer */}
-        <div className="flex-grow-1 position-relative">
-          <Loader />
-          <ModelViewer
-            onModelLoad={handleModelLoad}
-            backgroundColor={backgroundColor}
-            environment={environment}
-            selectedHDRI={selectedHDRI}
-            selectedPart={selectedPart}
+    //     {/* Loader and Model Viewer */}
+    //     <div className="flex-grow-1 position-relative">
+    //       <Loader />
+    //       <ModelViewer
+    //         onModelLoad={handleModelLoad}
+    //         backgroundColor={backgroundColor}
+    //         environment={environment}
+    //         selectedHDRI={selectedHDRI}
+    //         selectedPart={selectedPart}
+    //         onSelectPart={handleSelectPart}
+    //         setSelectedSidebarPart={setSelectedSidebarPart}
+    //         selectedSidebarPart={selectedSidebarPart}
+    //         autoRotate={autoRotate}
+    //         autoRotateSpeed={autoRotateSpeed}
+    //         showGrid={showGrid}
+    //         setModelDetails={setModelDetails}
+    //       />
+    //     </div>
+    //   </div>
+
+    //   <footer
+    //     className="d-flex justify-content-center align-items-center px-md-5 px-md-2"
+    //     style={{ height: "50px" }}
+    //   >
+    //     <Footer />
+    //   </footer>
+    // </div>
+    <div className="d-flex flex-column vh-100">
+    {/* Header */}
+    <header
+      className="d-flex align-items-center px-3"
+      style={{ height: "50px" }}
+    >
+      <Header />
+    </header>
+
+    {/* Main Content */}
+    <div className="d-flex flex-grow-1 overflow-hidden">
+      {/* Sidebar */}
+      {isSidebarOpen && (
+        <aside
+          className="d-none d-md-flex flex-column overflow-auto"
+          style={{ width: "250px" }}
+        >
+          <Sidebar
+            modelParts={modelParts}
+            toggleVisibility={handleToggleVisibility}
+            setBackgroundColor={setBackgroundColor}
+            setEnvironment={setEnvironment}
+            setSelectedHDRI={setSelectedHDRI}
             onSelectPart={handleSelectPart}
+            selectedPart={selectedPart}
             setSelectedSidebarPart={setSelectedSidebarPart}
             selectedSidebarPart={selectedSidebarPart}
             autoRotate={autoRotate}
+            setAutoRotate={setAutoRotate}
             autoRotateSpeed={autoRotateSpeed}
+            setAutoRotateSpeed={setAutoRotateSpeed}
             showGrid={showGrid}
-            setModelDetails={setModelDetails}
+            setShowGrid={setShowGrid}
+            modelDetails={modelDetails}
           />
-        </div>
-      </div>
+        </aside>
+      )}
 
-      <footer
-        className="d-flex justify-content-center align-items-center px-md-5 px-md-2"
-        style={{ height: "50px" }}
+      {/* ModelViewer */}
+      <main
+        className={`flex-grow-1 overflow-hidden ${
+          isSidebarOpen ? "ms-md-3" : ""
+        }`}
       >
-        <Footer />
-      </footer>
+        <ModelViewer
+          onModelLoad={handleModelLoad}
+          backgroundColor={backgroundColor}
+          environment={environment}
+          selectedHDRI={selectedHDRI}
+          selectedPart={selectedPart}
+          onSelectPart={handleSelectPart}
+          setSelectedSidebarPart={setSelectedSidebarPart}
+          selectedSidebarPart={selectedSidebarPart}
+          autoRotate={autoRotate}
+          autoRotateSpeed={autoRotateSpeed}
+          showGrid={showGrid}
+          setModelDetails={setModelDetails}
+        />
+      </main>
     </div>
+
+    {/* Footer */}
+    <footer
+      className="d-flex align-items-center px-3 justify-content-center"
+      style={{ height: "50px" }}
+    >
+      <Footer />
+    </footer>
+  </div>
   );
 }

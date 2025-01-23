@@ -9,37 +9,66 @@ import ErrorPage from "./pages/ErrorPage.js";
 
 function App() {
   return (
-    <div className="h-100 w-100">
-      <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Layout>
-                <Home />
-              </Layout>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <Layout>
-                <Settings />
-              </Layout>
-            }
-          />
-          <Route
-            path="/models"
-            element={
-              <Layout>
-                <ModelManagement />
-              </Layout>
-            }
-          />
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
-      </Router>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <Home />
+            </Layout>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <Layout>
+              <Settings />
+            </Layout>
+          }
+        />
+        <Route
+          path="/models"
+          element={
+            <Layout>
+              <ModelManagement />
+            </Layout>
+          }
+        />
+        <Route path="*" element={<ErrorPage />} />
+      </Routes>
+    </Router>
+    // <div className="h-100 w-100">
+    //   <Router>
+    //     <Routes>
+    //       <Route
+    //         path="/"
+    //         element={
+    //           <Layout>
+    //             <Home />
+    //           </Layout>
+    //         }
+    //       />
+    //       <Route
+    //         path="/settings"
+    //         element={
+    //           <Layout>
+    //             <Settings />
+    //           </Layout>
+    //         }
+    //       />
+    //       <Route
+    //         path="/models"
+    //         element={
+    //           <Layout>
+    //             <ModelManagement />
+    //           </Layout>
+    //         }
+    //       />
+    //       <Route path="*" element={<ErrorPage />} />
+    //     </Routes>
+    //   </Router>
+    // </div>
   );
 }
 

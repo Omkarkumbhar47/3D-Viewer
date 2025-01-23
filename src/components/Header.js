@@ -64,46 +64,65 @@ function Header() {
   };
 
   return (
-    <div className="d-flex justify-content-between align-items-center ">
-      <Link to="/" className="fs-3 ">
-        <div className="ThreeDElem">3D Viewer</div>
-      </Link>
+    <div className="d-flex justify-content-between align-items-center w-100">
+    {/* Logo / Title */}
+    <Link to="/" className="fs-3">
+      <div className="ThreeDElem">3D Viewer</div>
+    </Link>
 
-      <div className="date-time d-none d-sm-block">
-        <span>{longDate}</span> 
-      </div>
-
-      {/* <div className="navigation">
-        <Link to="/" className="btn btn-outline-light mx-2">
-          Home
-        </Link>
-        <Link to="/settings" className="btn btn-outline-light mx-2">
-          Settings
-        </Link>
-        <Link to="/models" className="btn btn-outline-light mx-2">
-          Manage Models
-        </Link>
-      </div> */}
-      <div className="controls d-none d-md-block">
-        {fullScreenOn ? (
-          <button
-            className=" ThreeDButton ThreeDElem"
-            onClick={toggleFullScreen}
-          >
-            <i className="ri-fullscreen-exit-line ViewerIcon"> </i>
-            <div className="ms-2">Minimize</div>
-          </button>
-        ) : (
-          <button
-            className=" ThreeDButton ThreeDElem"
-            onClick={toggleFullScreen}
-          >
-            <i className="ri-fullscreen-line ViewerIcon"> </i>
-            <div className="ms-2">Fullscreen</div>
-          </button>
-        )}
-      </div>
+    {/* Date-Time Display */}
+    <div className="date-time ">
+      <span>{longDate}</span>
     </div>
+
+    {/* Navigation Links */}
+    {/* <div className="navigation d-none d-md-flex">
+      <Link
+        to="/"
+        className="btn btn-outline-light mx-2"
+        aria-label="Go to Home"
+      >
+        Home
+      </Link>
+      <Link
+        to="/settings"
+        className="btn btn-outline-light mx-2"
+        aria-label="Go to Settings"
+      >
+        Settings
+      </Link>
+      <Link
+        to="/models"
+        className="btn btn-outline-light mx-2"
+        aria-label="Manage Models"
+      >
+        Manage Models
+      </Link>
+    </div> */}
+
+    {/* Fullscreen Controls */}
+    <div className="controls d-none d-sm-block">
+      {fullScreenOn ? (
+        <button
+          className="ThreeDButton ThreeDElem"
+          onClick={toggleFullScreen}
+          aria-label="Exit Fullscreen"
+        >
+          <i className="ri-fullscreen-exit-line ViewerIcon"></i>
+          <div className="ms-2">Minimize</div>
+        </button>
+      ) : (
+        <button
+          className="ThreeDButton ThreeDElem"
+          onClick={toggleFullScreen}
+          aria-label="Enter Fullscreen"
+        >
+          <i className="ri-fullscreen-line ViewerIcon"></i>
+          <div className="ms-2">Fullscreen</div>
+        </button>
+      )}
+    </div>
+  </div>
   );
 }
 
