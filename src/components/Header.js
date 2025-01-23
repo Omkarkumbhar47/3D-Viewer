@@ -31,7 +31,7 @@ function Header() {
   const currentTimeString = currentTime.toLocaleTimeString();
 
   const toggleFullScreen = () => {
-    setFullScreenOn(!fullScreenOn);
+    setFullScreenOn(fullScreenOn);
     if (
       document.fullscreenElement ||
       document.webkitFullscreenElement ||
