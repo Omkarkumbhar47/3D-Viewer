@@ -4,9 +4,8 @@ import Footer from "../components/Footer.js";
 import ModelViewer from "./ModelViewer";
 import Sidebar from "./Sidebar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Loader from "./Loder";
 
-export default function Layout() {
+export default function Layout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [modelParts, setModelParts] = useState([]);
   const [backgroundColor, setBackgroundColor] = useState("#222222");
@@ -54,61 +53,6 @@ export default function Layout() {
   };
 
   return (
-    // <div className="d-flex flex-column vh-100">
-    //   <header className="text-center py-2 px-4">
-    //     <Header />
-    //   </header>
-    //   <div className="d-flex flex-grow-1">
-    //     {isSidebarOpen && (
-    //       <div className="d-none d-md-block sidebar">
-    //         <Sidebar
-    //           modelParts={modelParts}
-    //           toggleVisibility={handleToggleVisibility}
-    //           setBackgroundColor={setBackgroundColor}
-    //           setEnvironment={setEnvironment}
-    //           setSelectedHDRI={setSelectedHDRI}
-    //           onSelectPart={handleSelectPart}
-    //           selectedPart={selectedPart}
-    //           setSelectedSidebarPart={setSelectedSidebarPart}
-    //           selectedSidebarPart={selectedSidebarPart}
-    //           autoRotate={autoRotate}
-    //           setAutoRotate={setAutoRotate}
-    //           autoRotateSpeed={autoRotateSpeed}
-    //           setAutoRotateSpeed={setAutoRotateSpeed}
-    //           showGrid={showGrid}
-    //           setShowGrid={setShowGrid}
-    //           modelDetails={modelDetails}
-    //         />
-    //       </div>
-    //     )}
-
-    //     {/* Loader and Model Viewer */}
-    //     <div className="flex-grow-1 position-relative">
-    //       <Loader />
-    //       <ModelViewer
-    //         onModelLoad={handleModelLoad}
-    //         backgroundColor={backgroundColor}
-    //         environment={environment}
-    //         selectedHDRI={selectedHDRI}
-    //         selectedPart={selectedPart}
-    //         onSelectPart={handleSelectPart}
-    //         setSelectedSidebarPart={setSelectedSidebarPart}
-    //         selectedSidebarPart={selectedSidebarPart}
-    //         autoRotate={autoRotate}
-    //         autoRotateSpeed={autoRotateSpeed}
-    //         showGrid={showGrid}
-    //         setModelDetails={setModelDetails}
-    //       />
-    //     </div>
-    //   </div>
-
-    //   <footer
-    //     className="d-flex justify-content-center align-items-center px-md-5 px-md-2"
-    //     style={{ height: "50px" }}
-    //   >
-    //     <Footer />
-    //   </footer>
-    // </div>
     <div className="d-flex flex-column vh-100">
     {/* Header */}
     <header
@@ -153,6 +97,7 @@ export default function Layout() {
           isSidebarOpen ? "ms-md-3" : ""
         }`}
       >
+         {children}
         <ModelViewer
           onModelLoad={handleModelLoad}
           backgroundColor={backgroundColor}

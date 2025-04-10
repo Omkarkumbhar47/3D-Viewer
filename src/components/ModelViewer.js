@@ -54,6 +54,7 @@ export default function ModelViewer({
   const [originalMaterials, setOriginalMaterials] = useState([]);
   const gridHelperRef = useRef();
   const modelRef = useRef();
+  const [loading, setLoading] = useState(false);
 
   // Demo models
   const demoModels = [
@@ -66,61 +67,89 @@ export default function ModelViewer({
   ];
 
   const loadModel = (file) => {
-    setError(null); // Clear previous errors
-
+    setError(null);
+    setLoading(true);
+  
     let fileExtension;
     let url;
-
+    let isUploadedFile = false;
+  
     if (file instanceof File) {
-      // For uploaded files
-      fileExtension = file.name.split(".").pop().toLowerCase(); // Extract file extension from File
-      url = URL.createObjectURL(file); // Create a URL for the file
-
-      // Add logic to load the model using the `url`
+      fileExtension = file.name.split(".").pop().toLowerCase();
+      url = URL.createObjectURL(file);
+      isUploadedFile = true;
+      proceedToLoad(fileExtension, url, file);
     } else if (typeof file === "string") {
-      // For demo models
-      fileExtension = file.split(".").pop().toLowerCase(); // Extract file extension from string path
-      url = file; // Use the string as the URL
-      // Add logic to load the model directly using `url`
+      fileExtension = file.split(".").pop().toLowerCase();
+      url = file;
+  
+      // Check if demo file exists first
+      fetch(url, { method: "HEAD" })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Demo file not found");
+          }
+          // Continue with loader
+          proceedToLoad(fileExtension, url, { name: url, size: 0 });
+        })
+        .catch((err) => {
+          console.error("Demo model loading error:", err);
+          setError("Failed to load demo model. File might be missing.");
+          setLoading(false);
+        });
+  
+      return; // Skip further loading for string case
     } else {
       console.error("Invalid file type:", file);
       setError("Invalid file type.");
+      setLoading(false);
       return;
     }
-
-    let loader;
-    switch (fileExtension) {
-      case "glb":
-      case "gltf":
-        loader = new GLTFLoader();
-        break;
-      case "obj":
-        loader = new OBJLoader();
-        break;
-      case "fbx":
-        loader = new FBXLoader();
-        break;
-      default:
-        setError(
-          "Unsupported file format. Please use .glb, .gltf, .obj, or .fbx."
-        );
-        return;
+  
+    // Core loading function
+    function proceedToLoad(extension, modelURL, originalFile) {
+      let loader;
+  
+      switch (extension) {
+        case "glb":
+        case "gltf":
+          loader = new GLTFLoader();
+          break;
+        case "obj":
+          loader = new OBJLoader();
+          break;
+        case "fbx":
+          loader = new FBXLoader();
+          break;
+        default:
+          setError("Unsupported file format. Use .glb, .gltf, .obj, or .fbx.");
+          setLoading(false);
+          return;
+      }
+  
+      loader
+        .loadAsync(modelURL)
+        .then((loadedModel) => {
+          const scene = loadedModel.scene || loadedModel;
+          setModel(scene);
+  
+          if (isUploadedFile) {
+            URL.revokeObjectURL(modelURL);
+          }
+  
+          extractParts(scene);
+          storeOriginalMaterials(scene);
+          calculateModelDetails(scene, loadedModel, originalFile);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Model loading error:", err);
+          setError("Failed to load model. Please try a different file.");
+          setLoading(false);
+        });
     }
-
-    loader
-      .loadAsync(url)
-      .then((loadedModel) => {
-        const scene = loadedModel.scene || loadedModel;
-        setModel(scene);
-        URL.revokeObjectURL(url);
-        extractParts(scene);
-        storeOriginalMaterials(scene);
-        calculateModelDetails(scene, loadedModel, file); // Add this to calculate model details
-      })
-      .catch(() => {
-        setError("Failed to load model. Please try a different file.");
-      });
   };
+  
 
   const extractParts = (model) => {
     const partsArray = [];
@@ -182,8 +211,10 @@ export default function ModelViewer({
   };
 
   const takeScreenshot = () => {
-    const screenSnap = document.querySelector("model-viewer-container");
-    screenSnap.toBlob((blob) => {
+    const canvas = document.querySelector("canvas");
+    if (!canvas) return;
+
+    canvas.toBlob((blob) => {
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = "screenshot.png";
@@ -332,13 +363,20 @@ export default function ModelViewer({
   return (
     <div
       id="model-viewer-container"
-      className="model-viewer CustomBorder rounded d-flex align-items-center justify-content-center position-relative "
+      className="model-viewer CustomBorder rounded d-flex align-items-center justify-content-center position-relative"
       style={{ width: "100%", height: "100%" }}
       onDrop={onDrop}
-      onDragOver={(event) => event.preventDefault()}
+      onDragOver={(e) => e.preventDefault()}
       onDragEnter={() => setIsDragActive(true)}
       onDragLeave={() => setIsDragActive(false)}
     >
+      {loading && (
+        <div className="position-absolute top-50 start-50 translate-middle text-center z-3">
+          <div className="spinner-border text-info" role="status" />
+          <div className="mt-2 fw-bold text-light">Loading Model...</div>
+        </div>
+      )}
+
       {model ? (
         <>
           <ControlsBar
@@ -360,11 +398,10 @@ export default function ModelViewer({
             {selectedHDRI && <Environment files={selectedHDRI} background />}
             <ambientLight intensity={1.0} />
             <directionalLight position={[0, 20, 0]} intensity={1.0} />
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={null}>
               {backgroundColor && (
                 <color attach="background" args={[backgroundColor]} />
               )}
-
               <group
                 onClick={(event) => {
                   event.stopPropagation();
@@ -394,37 +431,32 @@ export default function ModelViewer({
           </Canvas>
         </>
       ) : (
-        <>
-          <div className="text-center ">
-            {isDragActive ? (
-              <div className="fs-1">Release to view your file...</div>
-            ) : (
-              <div className="container text-center my-4">
-                {/* File Uploader */}
-                <div className="w-100 mx-auto">
-                  <FileUploader onFileLoad={loadModel} />
-                </div>
-
-                {/* Demo Models Section */}
-                <div className="row justify-content-center pt-4">
-                  {demoModels.map((dem) => (
-                    <div
-                      key={dem.name}
-                      className="col-6 col-sm-6 col-md-3 col-lg-3 d-flex justify-content-center mb-3"
-                    >
-                      <button
-                        className="btn btn-outline-info w-100 fw-bold"
-                        onClick={() => loadModel(dem.demoFile)}
-                      >
-                        {dem.name}
-                      </button>
-                    </div>
-                  ))}
-                </div>
+        <div className="text-center">
+          {isDragActive ? (
+            <div className="fs-1">Release to view your file...</div>
+          ) : (
+            <div className="container text-center my-4">
+              <div className="w-100 mx-auto">
+                <FileUploader onFileLoad={loadModel} />
               </div>
-            )}
-          </div>
-        </>
+              <div className="row justify-content-center pt-4">
+                {demoModels.map((dem) => (
+                  <div
+                    key={dem.name}
+                    className="col-6 col-sm-6 col-md-3 col-lg-3 d-flex justify-content-center mb-3"
+                  >
+                    <button
+                      className="btn btn-outline-info w-100 fw-bold"
+                      onClick={() => loadModel(dem.demoFile)}
+                    >
+                      {dem.name}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

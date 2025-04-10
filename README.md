@@ -1,109 +1,189 @@
+
+
+
+# 🧊 3D Model Viewer Application
+
+## 🔍 Overview  
+This is an **open-source 3D Model Viewer** built using modern web technologies like **React**, **React Three Fiber**, **Three.js**, and **Bootstrap**. It enables users to load, explore, and interact with 3D models through a responsive and intuitive interface.
+
 ---
 
-# 3D Model Viewer Application  
+## ✨ Key Features  
 
-## Overview  
-This project is a **3D Model Viewer** built with **React**, **React Three Fiber**, **Drei**, **Three.js**, and **Bootstrap**. It allows users to load, explore, and interact with 3D models in an intuitive and responsive interface.  
-
-## Features  
-### Layout  
-- **Responsive Header and Footer**:  
-  - Heights adjust based on screen size:  
-    - XS (<576px): 50px  
-    - SM (576px - 767px): 60px  
-    - MD (768px - 991px): 70px  
-    - LG (992px - 1199px): 80px  
-    - XL (1200px+): 90px  
-  - Header includes:  
-    - Logo  
-    - Minimize/Maximize controls  
+### 📐 Layout  
+- **Responsive Header & Footer**  
+  - Automatically adjusts height based on screen size:  
+    - XS: 50px | SM: 60px | MD: 70px | LG: 80px | XL: 90px  
+  - Includes:  
+    - App logo  
+    - Minimize / Maximize controls  
     - Current date and time  
-    - Other options  
+    - Quick access options  
 
-- **Sidebar**:  
-  - Opens automatically when a model is loaded.  
-  - Settings to configure:  
+- **Dynamic Sidebar**  
+  - Automatically opens when a model is loaded  
+  - Includes settings for:  
     - Background color  
-    - Environment settings  
-  - 'Meshes' section to traverse model parts, toggle visibility, and highlight selected parts.  
+    - Environment presets  
+  - **Meshes Section**:  
+    - Traverse model hierarchy  
+    - Toggle part visibility  
+    - Highlight selected parts (syncs with canvas)
 
-- **Model Viewer**:  
-  - Responsive canvas adapting to screen size.  
-  - Supports file selection and drag-and-drop for loading 3D models.  
-  - Highlights model parts on click with transparency and blue shade.  
-  - Synchronizes part selection between canvas and sidebar.  
+- **3D Model Canvas**  
+  - Fully responsive and adaptive canvas  
+  - Drag-and-drop or file input to load models  
+  - Clickable parts: highlights selection with blue tint and transparency  
+  - Seamless synchronization with sidebar part selection  
 
-### Functionality  
-1. **Lighting Helper**  
-   - Adjustable lighting settings for better model visualization.  
+---
 
-2. **Model Traversal**  
-   - Displays part names in the sidebar's 'Meshes' section.  
-   - Allows toggling part visibility.  
-   - Highlights the selected part and synchronizes its state with the sidebar.  
+### ⚙️ Functionality  
 
-3. **Snapshot Tool**  
-   - Capture screenshots of the canvas in various resolutions:  
-     - Small (1280x720)  
-     - Medium (1920x1080)  
-     - Large (2560x1440)  
-     - Custom (user-defined width and height)  
-   - Option to enable/disable transparent background in the snapshot.  
+#### 💡 Lighting Helper  
+- Adjustable lighting controls for better visualization of 3D models.
 
-### Customizations  
-- Integrated a custom font: **ForumRegular**, sourced from a local file (`./fonts/Forum-Regular.ttf`).  
+#### 🧭 Model Traversal  
+- Lists mesh/part names in the sidebar  
+- Enables toggling visibility and highlighting of parts  
+- Bi-directional syncing between canvas and sidebar selections
 
-### Technology Stack  
+#### 📸 Snapshot Tool  
+- Capture screenshots of the canvas in various resolutions:  
+  - Small (1280×720)  
+  - Medium (1920×1080)  
+  - Large (2560×1440)  
+  - Custom (user-defined size)  
+- Option to include a **transparent background** in snapshots
+
+---
+
+### 🎨 UI Customizations  
+- Integrated custom font: **ForumRegular** (`./fonts/Forum-Regular.ttf`) for a clean, modern look
+
+---
+
+## 🧱 Technology Stack  
 - **React**  
 - **React Three Fiber**  
 - **Drei**  
 - **Three.js**  
-- **Bootstrap**  
+- **Bootstrap**
 
-## Getting Started  
-### Installation  
-1. Clone the repository:  
-   ```bash  
-   git clone <repository-url>  
-   cd <project-directory>  
-   ```  
+---
 
-2. Install dependencies:  
-   ```bash  
-   npm install  
-   ```  
+## 🚀 Getting Started  
 
-3. Run the project:  
-   ```bash  
-   npm start  
-   ```  
+### 🔧 Installation  
+```bash
+git clone https://github.com/Omkarkumbhar47/3d-viewer.git
+cd 3d-viewer
+npm install
+npm start
+```
 
-### File Structure  
-```plaintext  
-src/  
-├── components/  
-│   ├── Header/  
-│   ├── Footer/  
-│   ├── Sidebar/  
-│   ├── ModelViewer/  
-├── fonts/  
-│   └── Forum-Regular.ttf  
-├── utils/  
-│   └── lightingHelper.js  
-├── App.js  
-└── index.js  
-```  
+### 📁 Project Structure  
+```plaintext
+src/
+├── components/
+│   ├── Header/
+│   ├── Footer/
+│   ├── Sidebar/
+│   ├── ModelViewer/
+├── fonts/
+│   └── Forum-Regular.ttf
+├── utils/
+│   └── lightingHelper.js
+├── App.js
+└── index.js
+```
 
-## Usage  
-1. Load a 3D model through file selection or drag-and-drop.  
-2. Explore model parts, toggle visibility, and highlight parts via the sidebar or canvas.  
-3. Adjust canvas lighting and environment settings through the sidebar.  
-4. Take snapshots with the customizable screenshot tool.  
+---
 
-## Future Improvements  
-- Add animations for transitions and interactions.  
-- Extend format support for 3D models.  
-- Implement a dark/light theme toggle.  
+## 🧪 Usage  
 
+1. Launch the app and upload a 3D model via file input or drag-and-drop  
+2. Explore and toggle visibility of individual model parts from the sidebar or canvas  
+3. Customize lighting and background/environment settings  
+4. Use the snapshot tool to export canvas images in your preferred resolution
 
----  
+---
+
+## 🚧 Future Roadmap  
+- Add animation transitions for parts and camera  
+- Support additional 3D model formats  
+- Implement dark/light theme toggle  
+- Export model metadata as JSON  
+
+---
+
+## 💡 Contributing  
+
+This project is open to contributions!  
+
+If you're passionate about:
+- 🧱 3D rendering on the web  
+- 🎨 Enhancing UI/UX for interactive applications  
+- 🧰 Adding new tools, features, or model utilities  
+
+Feel free to fork the repo, open issues, suggest features, or raise PRs! 🚀  
+
+### 🛠️ Getting Started  
+
+1. **Clone the repository**  
+   ```bash
+   git clone https://github.com/Omkarkumbhar47/3d-viewer.git
+   cd 3d-viewer
+   ```
+
+2. **Install dependencies**  
+   ```bash
+   npm install
+   ```
+
+3. **Run the app locally**  
+   ```bash
+   npm start
+   ```
+
+4. Start building and experimenting with features!
+
+📬 For major changes or feature discussions, feel free to open an issue or connect with me on [LinkedIn](https://linkedin.com/in/omkar-kumbhar-291168259/)
+
+Let’s build something awesome together! 💻✨
+
+---
+
+## 🔗 Links  
+
+- 🌐 **Live Demo**: [3d-viewer-seven.vercel.app](https://3d-viewer-seven.vercel.app/)  
+- 📂 **Source Code**: [github.com/Omkarkumbhar47/3d-viewer](https://github.com/Omkarkumbhar47/3d-viewer)  
+- 📫 **Connect**: [LinkedIn](https://linkedin.com/in/omkar-kumbhar-291168259/)
+
+---
+
+## 📄 License  
+
+This project is open source under the [MIT License](LICENSE).
+
+```MIT License
+
+Copyright (c) 2025 Omkar Kumbhar
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
