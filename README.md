@@ -1,6 +1,6 @@
 # 🚀 3D Model Viewer – Interactive Web-Based 3D Exploration Tool
 
-🌐 **Live Demo:** https://3d-viewer-eight.vercel.app  
+🌐 **Live Demo:** https://3dinspect.vercel.app
 📂 **Repository:** https://github.com/Omkarkumbhar47/3D-Viewer  
 👨‍💻 **Author:** Omkar Kumbhar
 
